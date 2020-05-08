@@ -21,12 +21,12 @@ extern "C" {
 
 #ifndef CMDLINE_PARSER_PACKAGE
 /** @brief the program name (used for printing errors) */
-#define CMDLINE_PARSER_PACKAGE "program"
+#define CMDLINE_PARSER_PACKAGE "SO"
 #endif
 
 #ifndef CMDLINE_PARSER_PACKAGE_NAME
 /** @brief the complete program name (used for help and version) */
-#define CMDLINE_PARSER_PACKAGE_NAME "program"
+#define CMDLINE_PARSER_PACKAGE_NAME "SO"
 #endif
 
 #ifndef CMDLINE_PARSER_VERSION
@@ -39,21 +39,41 @@ struct gengetopt_args_info
 {
   const char *help_help; /**< @brief Print help and exit help description.  */
   const char *version_help; /**< @brief Print version and exit help description.  */
-  char * person_arg;	/**< @brief name of the person.  */
-  char * person_orig;	/**< @brief name of the person original value given at command line.  */
-  const char *person_help; /**< @brief name of the person help description.  */
-  int age_arg;	/**< @brief age of the person.  */
-  char * age_orig;	/**< @brief age of the person original value given at command line.  */
-  const char *age_help; /**< @brief age of the person help description.  */
-  double height_arg;	/**< @brief height of the person.  */
-  char * height_orig;	/**< @brief height of the person original value given at command line.  */
-  const char *height_help; /**< @brief height of the person help description.  */
+  char * compact_arg;	/**< @brief Shows processed files in a compacted view.  */
+  char * compact_orig;	/**< @brief Shows processed files in a compacted view original value given at command line.  */
+  const char *compact_help; /**< @brief Shows processed files in a compacted view help description.  */
+  char * dir_arg;	/**< @brief directory.  */
+  char * dir_orig;	/**< @brief directory original value given at command line.  */
+  const char *dir_help; /**< @brief directory help description.  */
+  int discrete_arg;	/**< @brief discrete.  */
+  char * discrete_orig;	/**< @brief discrete original value given at command line.  */
+  const char *discrete_help; /**< @brief discrete help description.  */
+  char * file_arg;	/**< @brief file.  */
+  char * file_orig;	/**< @brief file original value given at command line.  */
+  const char *file_help; /**< @brief file help description.  */
+  short mode_arg;	/**< @brief mode.  */
+  char * mode_orig;	/**< @brief mode original value given at command line.  */
+  const char *mode_help; /**< @brief mode help description.  */
+  char * output_arg;	/**< @brief output.  */
+  char * output_orig;	/**< @brief output original value given at command line.  */
+  const char *output_help; /**< @brief output help description.  */
+  char * search_arg;	/**< @brief search.  */
+  char * search_orig;	/**< @brief search original value given at command line.  */
+  const char *search_help; /**< @brief search help description.  */
+  char * time_arg;	/**< @brief runtime.  */
+  char * time_orig;	/**< @brief runtime original value given at command line.  */
+  const char *time_help; /**< @brief runtime help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
-  unsigned int person_given ;	/**< @brief Whether person was given.  */
-  unsigned int age_given ;	/**< @brief Whether age was given.  */
-  unsigned int height_given ;	/**< @brief Whether height was given.  */
+  unsigned int compact_given ;	/**< @brief Whether compact was given.  */
+  unsigned int dir_given ;	/**< @brief Whether dir was given.  */
+  unsigned int discrete_given ;	/**< @brief Whether discrete was given.  */
+  unsigned int file_given ;	/**< @brief Whether file was given.  */
+  unsigned int mode_given ;	/**< @brief Whether mode was given.  */
+  unsigned int output_given ;	/**< @brief Whether output was given.  */
+  unsigned int search_given ;	/**< @brief Whether search was given.  */
+  unsigned int time_given ;	/**< @brief Whether time was given.  */
 
 } ;
 

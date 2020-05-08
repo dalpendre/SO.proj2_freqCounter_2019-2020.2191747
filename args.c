@@ -25,27 +25,32 @@
 
 #include "args.h"
 
-const char *gengetopt_args_info_purpose = "test gengetopt features";
+const char *gengetopt_args_info_purpose = "2º Project of SO";
 
-const char *gengetopt_args_info_usage = "Usage: program [OPTIONS]...";
+const char *gengetopt_args_info_usage = "Usage: SO [OPTIONS]...";
 
 const char *gengetopt_args_info_versiontext = "";
 
 const char *gengetopt_args_info_description = "";
 
 const char *gengetopt_args_info_help[] = {
-  "      --help           Print help and exit",
-  "  -V, --version        Print version and exit",
-  "  -p, --person=STRING  name of the person",
-  "  -a, --age=INT        age of the person",
-  "  -h, --height=DOUBLE  height of the person",
+  "  -h, --help            Print help and exit",
+  "  -V, --version         Print version and exit",
+  "  -c, --compact=STRING  Shows processed files in a compacted view",
+  "  -d, --dir=STRING      directory",
+  "  -i, --discrete=INT    discrete",
+  "  -f, --file=STRING     file",
+  "  -m, --mode=SHORT      mode",
+  "  -o, --output=STRING   output",
+  "  -s, --search=STRING   search",
+  "  -t, --time=STRING     runtime",
     0
 };
 
 typedef enum {ARG_NO
   , ARG_STRING
   , ARG_INT
-  , ARG_DOUBLE
+  , ARG_SHORT
 } cmdline_parser_arg_type;
 
 static
@@ -68,19 +73,34 @@ void clear_given (struct gengetopt_args_info *args_info)
 {
   args_info->help_given = 0 ;
   args_info->version_given = 0 ;
-  args_info->person_given = 0 ;
-  args_info->age_given = 0 ;
-  args_info->height_given = 0 ;
+  args_info->compact_given = 0 ;
+  args_info->dir_given = 0 ;
+  args_info->discrete_given = 0 ;
+  args_info->file_given = 0 ;
+  args_info->mode_given = 0 ;
+  args_info->output_given = 0 ;
+  args_info->search_given = 0 ;
+  args_info->time_given = 0 ;
 }
 
 static
 void clear_args (struct gengetopt_args_info *args_info)
 {
   FIX_UNUSED (args_info);
-  args_info->person_arg = NULL;
-  args_info->person_orig = NULL;
-  args_info->age_orig = NULL;
-  args_info->height_orig = NULL;
+  args_info->compact_arg = NULL;
+  args_info->compact_orig = NULL;
+  args_info->dir_arg = NULL;
+  args_info->dir_orig = NULL;
+  args_info->discrete_orig = NULL;
+  args_info->file_arg = NULL;
+  args_info->file_orig = NULL;
+  args_info->mode_orig = NULL;
+  args_info->output_arg = NULL;
+  args_info->output_orig = NULL;
+  args_info->search_arg = NULL;
+  args_info->search_orig = NULL;
+  args_info->time_arg = NULL;
+  args_info->time_orig = NULL;
   
 }
 
@@ -91,9 +111,14 @@ void init_args_info(struct gengetopt_args_info *args_info)
 
   args_info->help_help = gengetopt_args_info_help[0] ;
   args_info->version_help = gengetopt_args_info_help[1] ;
-  args_info->person_help = gengetopt_args_info_help[2] ;
-  args_info->age_help = gengetopt_args_info_help[3] ;
-  args_info->height_help = gengetopt_args_info_help[4] ;
+  args_info->compact_help = gengetopt_args_info_help[2] ;
+  args_info->dir_help = gengetopt_args_info_help[3] ;
+  args_info->discrete_help = gengetopt_args_info_help[4] ;
+  args_info->file_help = gengetopt_args_info_help[5] ;
+  args_info->mode_help = gengetopt_args_info_help[6] ;
+  args_info->output_help = gengetopt_args_info_help[7] ;
+  args_info->search_help = gengetopt_args_info_help[8] ;
+  args_info->time_help = gengetopt_args_info_help[9] ;
   
 }
 
@@ -177,10 +202,20 @@ static void
 cmdline_parser_release (struct gengetopt_args_info *args_info)
 {
 
-  free_string_field (&(args_info->person_arg));
-  free_string_field (&(args_info->person_orig));
-  free_string_field (&(args_info->age_orig));
-  free_string_field (&(args_info->height_orig));
+  free_string_field (&(args_info->compact_arg));
+  free_string_field (&(args_info->compact_orig));
+  free_string_field (&(args_info->dir_arg));
+  free_string_field (&(args_info->dir_orig));
+  free_string_field (&(args_info->discrete_orig));
+  free_string_field (&(args_info->file_arg));
+  free_string_field (&(args_info->file_orig));
+  free_string_field (&(args_info->mode_orig));
+  free_string_field (&(args_info->output_arg));
+  free_string_field (&(args_info->output_orig));
+  free_string_field (&(args_info->search_arg));
+  free_string_field (&(args_info->search_orig));
+  free_string_field (&(args_info->time_arg));
+  free_string_field (&(args_info->time_orig));
   
   
 
@@ -215,12 +250,22 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "help", 0, 0 );
   if (args_info->version_given)
     write_into_file(outfile, "version", 0, 0 );
-  if (args_info->person_given)
-    write_into_file(outfile, "person", args_info->person_orig, 0);
-  if (args_info->age_given)
-    write_into_file(outfile, "age", args_info->age_orig, 0);
-  if (args_info->height_given)
-    write_into_file(outfile, "height", args_info->height_orig, 0);
+  if (args_info->compact_given)
+    write_into_file(outfile, "compact", args_info->compact_orig, 0);
+  if (args_info->dir_given)
+    write_into_file(outfile, "dir", args_info->dir_orig, 0);
+  if (args_info->discrete_given)
+    write_into_file(outfile, "discrete", args_info->discrete_orig, 0);
+  if (args_info->file_given)
+    write_into_file(outfile, "file", args_info->file_orig, 0);
+  if (args_info->mode_given)
+    write_into_file(outfile, "mode", args_info->mode_orig, 0);
+  if (args_info->output_given)
+    write_into_file(outfile, "output", args_info->output_orig, 0);
+  if (args_info->search_given)
+    write_into_file(outfile, "search", args_info->search_orig, 0);
+  if (args_info->time_given)
+    write_into_file(outfile, "time", args_info->time_orig, 0);
   
 
   i = EXIT_SUCCESS;
@@ -337,9 +382,9 @@ cmdline_parser_required2 (struct gengetopt_args_info *args_info, const char *pro
   FIX_UNUSED (additional_error);
 
   /* checks for required options */
-  if (! args_info->person_given)
+  if (! args_info->file_given)
     {
-      fprintf (stderr, "%s: '--person' ('-p') option required%s\n", prog_name, (additional_error ? additional_error : ""));
+      fprintf (stderr, "%s: '--file' ('-f') option required%s\n", prog_name, (additional_error ? additional_error : ""));
       error_occurred = 1;
     }
   
@@ -418,8 +463,8 @@ int update_arg(void *field, char **orig_field,
   case ARG_INT:
     if (val) *((int *)field) = strtol (val, &stop_char, 0);
     break;
-  case ARG_DOUBLE:
-    if (val) *((double *)field) = strtod (val, &stop_char);
+  case ARG_SHORT:
+    if (val) *((short *)field) = (short)strtol (val, &stop_char, 0);
     break;
   case ARG_STRING:
     if (val) {
@@ -436,7 +481,7 @@ int update_arg(void *field, char **orig_field,
   /* check numeric conversion */
   switch(arg_type) {
   case ARG_INT:
-  case ARG_DOUBLE:
+  case ARG_SHORT:
     if (val && !(stop_char && *stop_char == '\0')) {
       fprintf(stderr, "%s: invalid numeric value: %s\n", package_name, val);
       return 1; /* failure */
@@ -503,69 +548,133 @@ cmdline_parser_internal (
       int option_index = 0;
 
       static struct option long_options[] = {
-        { "help",	0, NULL, 0 },
+        { "help",	0, NULL, 'h' },
         { "version",	0, NULL, 'V' },
-        { "person",	1, NULL, 'p' },
-        { "age",	1, NULL, 'a' },
-        { "height",	1, NULL, 'h' },
+        { "compact",	1, NULL, 'c' },
+        { "dir",	1, NULL, 'd' },
+        { "discrete",	1, NULL, 'i' },
+        { "file",	1, NULL, 'f' },
+        { "mode",	1, NULL, 'm' },
+        { "output",	1, NULL, 'o' },
+        { "search",	1, NULL, 's' },
+        { "time",	1, NULL, 't' },
         { 0,  0, 0, 0 }
       };
 
-      c = getopt_long (argc, argv, "Vp:a:h:", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVc:d:i:f:m:o:s:t:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
       switch (c)
         {
+        case 'h':	/* Print help and exit.  */
+          cmdline_parser_print_help ();
+          cmdline_parser_free (&local_args_info);
+          exit (EXIT_SUCCESS);
+
         case 'V':	/* Print version and exit.  */
           cmdline_parser_print_version ();
           cmdline_parser_free (&local_args_info);
           exit (EXIT_SUCCESS);
 
-        case 'p':	/* name of the person.  */
+        case 'c':	/* Shows processed files in a compacted view.  */
         
         
-          if (update_arg( (void *)&(args_info->person_arg), 
-               &(args_info->person_orig), &(args_info->person_given),
-              &(local_args_info.person_given), optarg, 0, 0, ARG_STRING,
+          if (update_arg( (void *)&(args_info->compact_arg), 
+               &(args_info->compact_orig), &(args_info->compact_given),
+              &(local_args_info.compact_given), optarg, 0, 0, ARG_STRING,
               check_ambiguity, override, 0, 0,
-              "person", 'p',
+              "compact", 'c',
               additional_error))
             goto failure;
         
           break;
-        case 'a':	/* age of the person.  */
+        case 'd':	/* directory.  */
         
         
-          if (update_arg( (void *)&(args_info->age_arg), 
-               &(args_info->age_orig), &(args_info->age_given),
-              &(local_args_info.age_given), optarg, 0, 0, ARG_INT,
+          if (update_arg( (void *)&(args_info->dir_arg), 
+               &(args_info->dir_orig), &(args_info->dir_given),
+              &(local_args_info.dir_given), optarg, 0, 0, ARG_STRING,
               check_ambiguity, override, 0, 0,
-              "age", 'a',
+              "dir", 'd',
               additional_error))
             goto failure;
         
           break;
-        case 'h':	/* height of the person.  */
+        case 'i':	/* discrete.  */
         
         
-          if (update_arg( (void *)&(args_info->height_arg), 
-               &(args_info->height_orig), &(args_info->height_given),
-              &(local_args_info.height_given), optarg, 0, 0, ARG_DOUBLE,
+          if (update_arg( (void *)&(args_info->discrete_arg), 
+               &(args_info->discrete_orig), &(args_info->discrete_given),
+              &(local_args_info.discrete_given), optarg, 0, 0, ARG_INT,
               check_ambiguity, override, 0, 0,
-              "height", 'h',
+              "discrete", 'i',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'f':	/* file.  */
+        
+        
+          if (update_arg( (void *)&(args_info->file_arg), 
+               &(args_info->file_orig), &(args_info->file_given),
+              &(local_args_info.file_given), optarg, 0, 0, ARG_STRING,
+              check_ambiguity, override, 0, 0,
+              "file", 'f',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'm':	/* mode.  */
+        
+        
+          if (update_arg( (void *)&(args_info->mode_arg), 
+               &(args_info->mode_orig), &(args_info->mode_given),
+              &(local_args_info.mode_given), optarg, 0, 0, ARG_SHORT,
+              check_ambiguity, override, 0, 0,
+              "mode", 'm',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'o':	/* output.  */
+        
+        
+          if (update_arg( (void *)&(args_info->output_arg), 
+               &(args_info->output_orig), &(args_info->output_given),
+              &(local_args_info.output_given), optarg, 0, 0, ARG_STRING,
+              check_ambiguity, override, 0, 0,
+              "output", 'o',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 's':	/* search.  */
+        
+        
+          if (update_arg( (void *)&(args_info->search_arg), 
+               &(args_info->search_orig), &(args_info->search_given),
+              &(local_args_info.search_given), optarg, 0, 0, ARG_STRING,
+              check_ambiguity, override, 0, 0,
+              "search", 's',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 't':	/* runtime.  */
+        
+        
+          if (update_arg( (void *)&(args_info->time_arg), 
+               &(args_info->time_orig), &(args_info->time_given),
+              &(local_args_info.time_given), optarg, 0, 0, ARG_STRING,
+              check_ambiguity, override, 0, 0,
+              "time", 't',
               additional_error))
             goto failure;
         
           break;
 
         case 0:	/* Long option with no short option */
-          if (strcmp (long_options[option_index].name, "help") == 0) {
-            cmdline_parser_print_help ();
-            cmdline_parser_free (&local_args_info);
-            exit (EXIT_SUCCESS);
-          }
-
         case '?':	/* Invalid option.  */
           /* `getopt_long' already printed an error message.  */
           goto failure;
