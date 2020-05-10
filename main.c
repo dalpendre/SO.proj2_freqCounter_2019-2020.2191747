@@ -16,8 +16,7 @@ int main(int argc, char *argv[])
 
     if(args_info.file_given)
     {
-        //Secondary parameters
-        process_files(argc, argv);
+        verify_parameters(argc, argv);
     }
 
     cmdline_parser_free(&args_info);
