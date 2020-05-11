@@ -4,6 +4,7 @@
 
 #include "debug.h"
 #include "memory.h"
+#include "matrix.h"
 
 #include "freqCounter.h"
 
@@ -11,7 +12,9 @@
 #define RED   "\x1B[31m"
 #define RESET "\x1B[0m"
 
-#define MODE1_NUM_ROWS 256
+#define MODE1_NUM_ROWS 255  
+#define MODE2_NUM_ROWS 65535
+#define MODE4_NUM_ROWS 4294967295
 
 int verify_parameters(int argc, char *argv[])
 {
@@ -69,6 +72,7 @@ int verify_mode_and_process_file(FILE *fptr, int mode_number, char *file_path)
 int process_listed_files_mode1(FILE *fptr, char *file_path)
 {
     char c, file_caracther;
+    int **matrix_mode1_counts = matrix_new(MODE1_NUM_ROWS, 2);
 
     printf("%s\n", file_path);
     while((file_caracther = fgetc(fptr)) != EOF)
@@ -86,30 +90,6 @@ int process_listed_files_mode1(FILE *fptr, char *file_path)
 
     return 0;
 }
-
-//Matrix to store ocurrences of each byte
-int **matrix_mode1_new(void)
-{
-    size_t mem_len = MODE1_NUM_ROWS * 2 * sizeof(int);
-    int *matrix_ptr = malloc(mem_len);
-
-    size_t vect_len = sizeof(int*) * MODE1_NUM_ROWS;
-    int **matrix_vect_ptr = MALLOC(vect_len);
-
-    if(matrix_ptr == NULL || matrix_vect_ptr == NULL)
-    {
-        exit(1);
-    }
-
-    for(int row = 0; row < MODE1_NUM_ROWS; row++)
-    {
-        matrix_vect_ptr[row] = &(matrix_ptr[row * MODE1_NUM_ROWS]);
-    }
-
-    return matrix_vect_ptr;
-}
-
-
 
 int process_listed_files_mode2(FILE *fptr, char *file_path)
 {

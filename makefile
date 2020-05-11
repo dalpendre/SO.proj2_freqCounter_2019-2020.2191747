@@ -24,7 +24,7 @@ PROGRAM=freqCounter
 PROGRAM_OPT=args
 
 # Object files required to build the executable
-PROGRAM_OBJS=main.o freqCounter.o debug.o memory.o $(PROGRAM_OPT).o
+PROGRAM_OBJS= main.o freqCounter.o debug.o memory.o $(PROGRAM_OPT).o
 
 # Clean and all are not files
 .PHONY: clean all docs indent debugon
