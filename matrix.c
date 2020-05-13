@@ -38,7 +38,8 @@ void matrix_print(int **matrix, int num_rows)
 {
     for(int row = 0; row < num_rows; row++)
     {
-        printf("byte %03d:%d\n", matrix[row][0], matrix[row][1]);
+        if(matrix[row][1] > 0)
+            printf("byte %03d:%d\n", matrix[row][0], matrix[row][1]);
     }
 }
 
