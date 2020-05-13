@@ -4,17 +4,19 @@
 
 #include "debug.h"
 #include "memory.h"
-#include "matrix.h"
 
+#include "matrix.h" 
 #include "freqCounter.h"
 
 //Text hightlights
 #define RED   "\x1B[31m"
 #define RESET "\x1B[0m"
 
-#define MODE1_NUM_ROWS 255  
-#define MODE2_NUM_ROWS 65535
-#define MODE4_NUM_ROWS 4294967295
+#define MODE1_NUM_ROWS 256  
+#define MODE2_NUM_ROWS 65536
+#define MODE4_NUM_ROWS 4294967296
+
+#define NUM_COLS 2
 
 int verify_parameters(int argc, char *argv[])
 {
@@ -69,23 +71,36 @@ int verify_mode_and_process_file(FILE *fptr, int mode_number, char *file_path)
     return 0;
 } 
 
+int count_occurences(int **matrix, char c, int num_rows, int num_cols, int max_byte_value)
+{
+    return 0;
+}
+
 int process_listed_files_mode1(FILE *fptr, char *file_path)
 {
-    char c, file_caracther;
-    int **matrix_mode1_counts = matrix_new(MODE1_NUM_ROWS, 2);
+    char file_caracther;
+    int **matrix_counts = matrix_new(MODE1_NUM_ROWS, NUM_COLS);
+    int byte_count = 0;
 
-    printf("%s\n", file_path);
+    matrix_fill_bytes(matrix_counts, MODE1_NUM_ROWS);
+
     while((file_caracther = fgetc(fptr)) != EOF)
     {
-        for(c = 'A'; c <= 'Z'; c++)
+        for(int row = 0; row < MODE1_NUM_ROWS; row++)
         {
-            if(c == file_caracther)
-            {
-                
-            }
+            if(file_caracther == row)
+                matrix_add_ocurrence(matrix_counts, MODE1_NUM_ROWS, file_caracther);
         }
     }
 
+    byte_count = count_bytes_in_file(matrix_counts, MODE1_NUM_ROWS);
+
+    printf("\nfreqCounter:'%s':%d\n", file_path, byte_count);
+    matrix_print(matrix_counts, MODE1_NUM_ROWS);
+    printf("sum:%i\n", byte_count);
+
+    matrix_delete(matrix_counts);
+    
     fclose(fptr);
 
     return 0;

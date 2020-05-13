@@ -8,8 +8,9 @@
 
 int **matrix_new(int num_rows, int num_cols)
 {
+    //Allocate the memory
     size_t mem_len = num_rows * num_cols * sizeof(int);
-    int *matrix_ptr = malloc(mem_len);
+    int *matrix_ptr = MALLOC(mem_len);
 
     size_t vect_len = sizeof(int*) * num_rows;
     int **matrix_vect_ptr = MALLOC(vect_len);
@@ -21,7 +22,7 @@ int **matrix_new(int num_rows, int num_cols)
 
     for(int row = 0; row < num_rows; row++)
     {
-        matrix_vect_ptr[row] = &(matrix_ptr[row * num_rows]);
+        matrix_vect_ptr[row] = &(matrix_ptr[row*num_cols]);
     }
 
     return matrix_vect_ptr;
@@ -33,25 +34,41 @@ void matrix_delete(int **matrix_vect_ptr)
     FREE(matrix_vect_ptr);
 }
 
-void matrix_print(int **matrix, int num_rows, int num_cols)
+void matrix_print(int **matrix, int num_rows)
 {
     for(int row = 0; row < num_rows; row++)
     {
-        for(int col = 0; col < num_cols; col++)
-        {
-            printf("%.2f ", matrix[row][col]);
-        }
-        putchar('\n');
+        printf("byte %03d: %d\n", matrix[row][0], matrix[row][1]);
     }
 }
 
-void matrix_fill(float **matrix, int num_rows, int num_cols, float value)
+//Fills byte list
+void matrix_fill_bytes(int **matrix, int num_rows, int value)
 {
     for(int row = 0; row < num_rows; row++)
     {
-        for(int col = 0; col < num_cols; col++)
-        {
-            matrix[row][col] = value;
-        }
+        matrix[row][0] = row;
     }
+}
+
+//Add ocurrence to certain byte
+void matrix_add_ocurrence(int **matrix, int num_rows, int file_caracther)
+{
+    for(int row = 0; row < num_rows; row++)
+    {
+        if(file_caracther == matrix[row][0])
+            matrix[row][1] += 1;
+    }
+}
+
+int count_bytes_in_file(int **matrix, int num_rows)
+{
+    int byte_counter = 0;
+
+    for(int row = 0; row < num_rows; row++)
+    {
+        byte_counter += matrix[row][1];
+    }
+
+    return byte_counter;
 }
