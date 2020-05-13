@@ -39,9 +39,6 @@ struct gengetopt_args_info
 {
   const char *help_help; /**< @brief Print help and exit help description.  */
   const char *version_help; /**< @brief Print version and exit help description.  */
-  char * compact_arg;	/**< @brief Shows processed files in a compacted view.  */
-  char * compact_orig;	/**< @brief Shows processed files in a compacted view original value given at command line.  */
-  const char *compact_help; /**< @brief Shows processed files in a compacted view help description.  */
   char * dir_arg;	/**< @brief directory.  */
   char * dir_orig;	/**< @brief directory original value given at command line.  */
   const char *dir_help; /**< @brief directory help description.  */
@@ -66,7 +63,6 @@ struct gengetopt_args_info
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
-  unsigned int compact_given ;	/**< @brief Whether compact was given.  */
   unsigned int dir_given ;	/**< @brief Whether dir was given.  */
   unsigned int discrete_given ;	/**< @brief Whether discrete was given.  */
   unsigned int file_given ;	/**< @brief Whether file was given.  */

@@ -34,16 +34,15 @@ const char *gengetopt_args_info_versiontext = "";
 const char *gengetopt_args_info_description = "";
 
 const char *gengetopt_args_info_help[] = {
-  "  -h, --help            Print help and exit",
-  "  -V, --version         Print version and exit",
-  "  -c, --compact=STRING  Shows processed files in a compacted view",
-  "  -d, --dir=STRING      directory",
-  "  -i, --discrete=INT    discrete",
-  "  -f, --file=STRING     file",
-  "  -m, --mode=SHORT      mode",
-  "  -o, --output=STRING   output",
-  "  -s, --search=STRING   search",
-  "  -t, --time=STRING     runtime",
+  "  -h, --help           Print help and exit",
+  "  -V, --version        Print version and exit",
+  "  -d, --dir=STRING     directory",
+  "  -i, --discrete=INT   discrete",
+  "  -f, --file=STRING    file",
+  "  -m, --mode=SHORT     mode",
+  "  -o, --output=STRING  output",
+  "  -s, --search=STRING  search",
+  "  -t, --time=STRING    runtime",
     0
 };
 
@@ -73,7 +72,6 @@ void clear_given (struct gengetopt_args_info *args_info)
 {
   args_info->help_given = 0 ;
   args_info->version_given = 0 ;
-  args_info->compact_given = 0 ;
   args_info->dir_given = 0 ;
   args_info->discrete_given = 0 ;
   args_info->file_given = 0 ;
@@ -87,8 +85,6 @@ static
 void clear_args (struct gengetopt_args_info *args_info)
 {
   FIX_UNUSED (args_info);
-  args_info->compact_arg = NULL;
-  args_info->compact_orig = NULL;
   args_info->dir_arg = NULL;
   args_info->dir_orig = NULL;
   args_info->discrete_orig = NULL;
@@ -111,14 +107,13 @@ void init_args_info(struct gengetopt_args_info *args_info)
 
   args_info->help_help = gengetopt_args_info_help[0] ;
   args_info->version_help = gengetopt_args_info_help[1] ;
-  args_info->compact_help = gengetopt_args_info_help[2] ;
-  args_info->dir_help = gengetopt_args_info_help[3] ;
-  args_info->discrete_help = gengetopt_args_info_help[4] ;
-  args_info->file_help = gengetopt_args_info_help[5] ;
-  args_info->mode_help = gengetopt_args_info_help[6] ;
-  args_info->output_help = gengetopt_args_info_help[7] ;
-  args_info->search_help = gengetopt_args_info_help[8] ;
-  args_info->time_help = gengetopt_args_info_help[9] ;
+  args_info->dir_help = gengetopt_args_info_help[2] ;
+  args_info->discrete_help = gengetopt_args_info_help[3] ;
+  args_info->file_help = gengetopt_args_info_help[4] ;
+  args_info->mode_help = gengetopt_args_info_help[5] ;
+  args_info->output_help = gengetopt_args_info_help[6] ;
+  args_info->search_help = gengetopt_args_info_help[7] ;
+  args_info->time_help = gengetopt_args_info_help[8] ;
   
 }
 
@@ -202,8 +197,6 @@ static void
 cmdline_parser_release (struct gengetopt_args_info *args_info)
 {
 
-  free_string_field (&(args_info->compact_arg));
-  free_string_field (&(args_info->compact_orig));
   free_string_field (&(args_info->dir_arg));
   free_string_field (&(args_info->dir_orig));
   free_string_field (&(args_info->discrete_orig));
@@ -250,8 +243,6 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "help", 0, 0 );
   if (args_info->version_given)
     write_into_file(outfile, "version", 0, 0 );
-  if (args_info->compact_given)
-    write_into_file(outfile, "compact", args_info->compact_orig, 0);
   if (args_info->dir_given)
     write_into_file(outfile, "dir", args_info->dir_orig, 0);
   if (args_info->discrete_given)
@@ -382,12 +373,6 @@ cmdline_parser_required2 (struct gengetopt_args_info *args_info, const char *pro
   FIX_UNUSED (additional_error);
 
   /* checks for required options */
-  if (! args_info->dir_given)
-    {
-      fprintf (stderr, "%s: '--dir' ('-d') option required%s\n", prog_name, (additional_error ? additional_error : ""));
-      error_occurred = 1;
-    }
-  
   if (! args_info->file_given)
     {
       fprintf (stderr, "%s: '--file' ('-f') option required%s\n", prog_name, (additional_error ? additional_error : ""));
@@ -556,7 +541,6 @@ cmdline_parser_internal (
       static struct option long_options[] = {
         { "help",	0, NULL, 'h' },
         { "version",	0, NULL, 'V' },
-        { "compact",	1, NULL, 'c' },
         { "dir",	1, NULL, 'd' },
         { "discrete",	1, NULL, 'i' },
         { "file",	1, NULL, 'f' },
@@ -567,7 +551,7 @@ cmdline_parser_internal (
         { 0,  0, 0, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVc:d:i:f:m:o:s:t:", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVd:i:f:m:o:s:t:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -583,18 +567,6 @@ cmdline_parser_internal (
           cmdline_parser_free (&local_args_info);
           exit (EXIT_SUCCESS);
 
-        case 'c':	/* Shows processed files in a compacted view.  */
-        
-        
-          if (update_arg( (void *)&(args_info->compact_arg), 
-               &(args_info->compact_orig), &(args_info->compact_given),
-              &(local_args_info.compact_given), optarg, 0, 0, ARG_STRING,
-              check_ambiguity, override, 0, 0,
-              "compact", 'c',
-              additional_error))
-            goto failure;
-        
-          break;
         case 'd':	/* directory.  */
         
         

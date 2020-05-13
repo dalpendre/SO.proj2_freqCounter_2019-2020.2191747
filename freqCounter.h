@@ -4,7 +4,7 @@
 //Files
 int get_listed_files(struct gengetopt_args_info args_info, int argc, char *argv[]);
 int mode_get_listed_files(struct gengetopt_args_info args_info, int argc, char *argv[]);
-int verify_if_file_exists(struct gengetopt_args_info args_info, char *file_path);
+int verify_if_file_exists(struct gengetopt_args_info args_info, int argc, char *argv[], char *file_path);
 int mode_verify_if_file_exists(struct gengetopt_args_info args_info, int mode_number, char *file_path);
 
 //Directories
@@ -17,7 +17,7 @@ void verify_mode(FILE *fptr, int mode_number, char *file_path);
 
 //File processing
 void process_file_mode1(FILE *fptr, char *file_path);
-void process_file_compact(FILE *fptr, char *file_path);
+void process_file_mode1_compact(FILE *fptr, char *file_path);
 void processed_file_to_file(void);
 
 #endif

@@ -6,8 +6,8 @@ package "SO"
 version "1.0"
 
 #SO Project parameters
-option "compact" c "Shows processed files in a compacted view" string no
-option "dir" d "directory" string yes
+#option "compact" c "Shows processed files in a compacted view" string no
+option "dir" d "directory" string no
 option "discrete" i "discrete" int no
 option "file" f "file" string yes
 option "mode" m "mode" short no

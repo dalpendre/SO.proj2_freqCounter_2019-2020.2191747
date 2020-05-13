@@ -29,7 +29,7 @@ int get_listed_files(struct gengetopt_args_info args_info, int argc, char *argv[
 
     while(file != NULL)
     {
-        verify_if_file_exists(args_info, file);
+        verify_if_file_exists(args_info, argc, argv, file);
         file = strtok(NULL, delim);
     }
 
@@ -43,7 +43,6 @@ int mode_get_listed_files(struct gengetopt_args_info args_info, int argc, char *
     const char delim[2] = ",";
     char *file;
 
-    //Reads each file in the 4th argument, delimitated by comma
     file = strtok(args_info.file_arg, delim);
 
     while(file != NULL)
@@ -55,8 +54,7 @@ int mode_get_listed_files(struct gengetopt_args_info args_info, int argc, char *
     return 0;
 }
 
-
-int verify_if_file_exists(struct gengetopt_args_info args_info, char *file_path)
+int verify_if_file_exists(struct gengetopt_args_info args_info, int argc, char *argv[], char *file_path)
 {
     FILE *fptr = NULL;
     fptr = fopen(file_path, "r");
@@ -69,7 +67,8 @@ int verify_if_file_exists(struct gengetopt_args_info args_info, char *file_path)
     else
     {
         //Verifies if compact is given
-        
+        if(argv[5] == "--compact" || argv[5] == "-c")
+            process_file_mode1_compact(fptr, file_path);
 
         process_file_mode1(fptr, file_path);
     }
@@ -165,9 +164,29 @@ void process_file_mode1(FILE *fptr, char *file_path)
     fclose(fptr);
 }
 
-void process_file_compact(FILE *fptr, char *file_path)
+void process_file_mode1_compact(FILE *fptr, char *file_path)
 {
+    char file_caracther;
+    int **matrix_counts = matrix_new(MODE1_NUM_ROWS, NUM_COLS);
+    int byte_count = 0;
 
+    matrix_fill_bytes(matrix_counts, MODE1_NUM_ROWS);
+
+    while((file_caracther = fgetc(fptr)) != EOF)
+    {
+        for(int row = 0; row < MODE1_NUM_ROWS; row++)
+        {
+            if(file_caracther == row)
+                matrix_add_ocurrence(matrix_counts, MODE1_NUM_ROWS, file_caracther);
+        }
+    }
+
+    byte_count = count_bytes_in_file(matrix_counts, MODE1_NUM_ROWS);
+
+    printf("%s:%dbytes:%d:%d\n", file_path, byte_count, byte_count, byte_count);
+
+    matrix_delete(matrix_counts);
+    fclose(fptr);
 }
 
 void processed_file_to_file(void)
