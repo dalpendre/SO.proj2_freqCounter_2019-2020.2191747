@@ -8,7 +8,6 @@
 #include "matrix.h" 
 #include "freqCounter.h"
 
-//Text hightlights
 #define RED   "\x1B[31m"
 #define RESET "\x1B[0m"
 
@@ -20,20 +19,22 @@
 
 int verify_parameters(int argc, char *argv[])
 {
-    //Verify parameter mode
     if(strcmp(argv[1], "--mode") == 0 || strcmp(argv[1], "-m") == 0)
     {
         int mode_number = atoi(argv[2]);
+        const char delim[2] = ",";
+        char *file;
 
-        for(int i = 4; i < argc; i++)
+        //Reads each file in the 4th argument, delimitated by comma
+        file = strtok(argv[4], delim);
+
+        while(file != NULL)
         {
-            verify_if_file_exists(mode_number, argv[i]);
+            verify_if_file_exists(mode_number, file);
+            file = strtok(NULL, delim);
         }
-    }
-    else
-    {
-        for(int i = 4; i < argc; i++)
-            verify_if_file_exists(1, argv[i]);
+
+        return 0;
     }
 
     return 0;
@@ -69,11 +70,6 @@ int verify_mode_and_process_file(FILE *fptr, int mode_number, char *file_path)
         ERROR(1, "ERROR: invalid value ‘%d’ for -m/--mode.\n", mode_number);
 
     return 0;
-} 
-
-int count_occurences(int **matrix, char c, int num_rows, int num_cols, int max_byte_value)
-{
-    return 0;
 }
 
 int process_listed_files_mode1(FILE *fptr, char *file_path)
@@ -100,7 +96,6 @@ int process_listed_files_mode1(FILE *fptr, char *file_path)
     printf("sum:%i\n", byte_count);
 
     matrix_delete(matrix_counts);
-    
     fclose(fptr);
 
     return 0;

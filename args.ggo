@@ -9,7 +9,7 @@ version "1.0"
 option "compact" c "Shows processed files in a compacted view" string no
 option "dir" d "directory" string no
 option "discrete" i "discrete" int no
-option "file" f "file" string yes
+option "file" f "file" string yes multiple
 option "mode" m "mode" short no
 option "output" o "output" string no
 option "search" s "search" string no

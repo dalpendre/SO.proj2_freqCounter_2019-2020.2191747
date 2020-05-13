@@ -38,7 +38,7 @@ void matrix_print(int **matrix, int num_rows)
 {
     for(int row = 0; row < num_rows; row++)
     {
-        printf("byte %03d: %d\n", matrix[row][0], matrix[row][1]);
+        printf("byte %03d:%d\n", matrix[row][0], matrix[row][1]);
     }
 }
 
@@ -51,7 +51,6 @@ void matrix_fill_bytes(int **matrix, int num_rows, int value)
     }
 }
 
-//Add ocurrence to certain byte
 void matrix_add_ocurrence(int **matrix, int num_rows, int file_caracther)
 {
     for(int row = 0; row < num_rows; row++)
@@ -61,6 +60,7 @@ void matrix_add_ocurrence(int **matrix, int num_rows, int file_caracther)
     }
 }
 
+//Count bytes in matrix
 int count_bytes_in_file(int **matrix, int num_rows)
 {
     int byte_counter = 0;

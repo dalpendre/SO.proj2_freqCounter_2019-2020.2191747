@@ -48,8 +48,10 @@ struct gengetopt_args_info
   int discrete_arg;	/**< @brief discrete.  */
   char * discrete_orig;	/**< @brief discrete original value given at command line.  */
   const char *discrete_help; /**< @brief discrete help description.  */
-  char * file_arg;	/**< @brief file.  */
-  char * file_orig;	/**< @brief file original value given at command line.  */
+  char ** file_arg;	/**< @brief file.  */
+  char ** file_orig;	/**< @brief file original value given at command line.  */
+  unsigned int file_min; /**< @brief file's minimum occurreces */
+  unsigned int file_max; /**< @brief file's maximum occurreces */
   const char *file_help; /**< @brief file help description.  */
   short mode_arg;	/**< @brief mode.  */
   char * mode_orig;	/**< @brief mode original value given at command line.  */
