@@ -39,30 +39,32 @@ struct gengetopt_args_info
 {
   const char *help_help; /**< @brief Print help and exit help description.  */
   const char *version_help; /**< @brief Print version and exit help description.  */
-  char * dir_arg;	/**< @brief directory.  */
-  char * dir_orig;	/**< @brief directory original value given at command line.  */
-  const char *dir_help; /**< @brief directory help description.  */
-  int discrete_arg;	/**< @brief discrete.  */
-  char * discrete_orig;	/**< @brief discrete original value given at command line.  */
-  const char *discrete_help; /**< @brief discrete help description.  */
-  char * file_arg;	/**< @brief file.  */
-  char * file_orig;	/**< @brief file original value given at command line.  */
-  const char *file_help; /**< @brief file help description.  */
-  short mode_arg;	/**< @brief mode.  */
-  char * mode_orig;	/**< @brief mode original value given at command line.  */
-  const char *mode_help; /**< @brief mode help description.  */
-  char * output_arg;	/**< @brief output.  */
-  char * output_orig;	/**< @brief output original value given at command line.  */
-  const char *output_help; /**< @brief output help description.  */
-  char * search_arg;	/**< @brief search.  */
-  char * search_orig;	/**< @brief search original value given at command line.  */
-  const char *search_help; /**< @brief search help description.  */
-  char * time_arg;	/**< @brief runtime.  */
-  char * time_orig;	/**< @brief runtime original value given at command line.  */
-  const char *time_help; /**< @brief runtime help description.  */
+  const char *compact_help; /**< @brief Shows processed files in a compacted view help description.  */
+  char * dir_arg;	/**< @brief Directory to process.  */
+  char * dir_orig;	/**< @brief Directory to process original value given at command line.  */
+  const char *dir_help; /**< @brief Directory to process help description.  */
+  int discrete_arg;	/**< @brief Show selected bytes in file.  */
+  char * discrete_orig;	/**< @brief Show selected bytes in file original value given at command line.  */
+  const char *discrete_help; /**< @brief Show selected bytes in file help description.  */
+  char * file_arg;	/**< @brief Files to process.  */
+  char * file_orig;	/**< @brief Files to process original value given at command line.  */
+  const char *file_help; /**< @brief Files to process help description.  */
+  short mode_arg;	/**< @brief Mode to process.  */
+  char * mode_orig;	/**< @brief Mode to process original value given at command line.  */
+  const char *mode_help; /**< @brief Mode to process help description.  */
+  char * output_arg;	/**< @brief Send output to file.  */
+  char * output_orig;	/**< @brief Send output to file original value given at command line.  */
+  const char *output_help; /**< @brief Send output to file help description.  */
+  char * search_arg;	/**< @brief Search pattern.  */
+  char * search_orig;	/**< @brief Search pattern original value given at command line.  */
+  const char *search_help; /**< @brief Search pattern help description.  */
+  char * time_arg;	/**< @brief Print time of process execution.  */
+  char * time_orig;	/**< @brief Print time of process execution original value given at command line.  */
+  const char *time_help; /**< @brief Print time of process execution help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
+  unsigned int compact_given ;	/**< @brief Whether compact was given.  */
   unsigned int dir_given ;	/**< @brief Whether dir was given.  */
   unsigned int discrete_given ;	/**< @brief Whether discrete was given.  */
   unsigned int file_given ;	/**< @brief Whether file was given.  */

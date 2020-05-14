@@ -36,13 +36,14 @@ const char *gengetopt_args_info_description = "";
 const char *gengetopt_args_info_help[] = {
   "  -h, --help           Print help and exit",
   "  -V, --version        Print version and exit",
-  "  -d, --dir=STRING     directory",
-  "  -i, --discrete=INT   discrete",
-  "  -f, --file=STRING    file",
-  "  -m, --mode=SHORT     mode",
-  "  -o, --output=STRING  output",
-  "  -s, --search=STRING  search",
-  "  -t, --time=STRING    runtime",
+  "  -c, --compact        Shows processed files in a compacted view",
+  "  -d, --dir=STRING     Directory to process",
+  "  -i, --discrete=INT   Show selected bytes in file",
+  "  -f, --file=STRING    Files to process",
+  "  -m, --mode=SHORT     Mode to process",
+  "  -o, --output=STRING  Send output to file",
+  "  -s, --search=STRING  Search pattern",
+  "  -t, --time=STRING    Print time of process execution",
     0
 };
 
@@ -72,6 +73,7 @@ void clear_given (struct gengetopt_args_info *args_info)
 {
   args_info->help_given = 0 ;
   args_info->version_given = 0 ;
+  args_info->compact_given = 0 ;
   args_info->dir_given = 0 ;
   args_info->discrete_given = 0 ;
   args_info->file_given = 0 ;
@@ -107,13 +109,14 @@ void init_args_info(struct gengetopt_args_info *args_info)
 
   args_info->help_help = gengetopt_args_info_help[0] ;
   args_info->version_help = gengetopt_args_info_help[1] ;
-  args_info->dir_help = gengetopt_args_info_help[2] ;
-  args_info->discrete_help = gengetopt_args_info_help[3] ;
-  args_info->file_help = gengetopt_args_info_help[4] ;
-  args_info->mode_help = gengetopt_args_info_help[5] ;
-  args_info->output_help = gengetopt_args_info_help[6] ;
-  args_info->search_help = gengetopt_args_info_help[7] ;
-  args_info->time_help = gengetopt_args_info_help[8] ;
+  args_info->compact_help = gengetopt_args_info_help[2] ;
+  args_info->dir_help = gengetopt_args_info_help[3] ;
+  args_info->discrete_help = gengetopt_args_info_help[4] ;
+  args_info->file_help = gengetopt_args_info_help[5] ;
+  args_info->mode_help = gengetopt_args_info_help[6] ;
+  args_info->output_help = gengetopt_args_info_help[7] ;
+  args_info->search_help = gengetopt_args_info_help[8] ;
+  args_info->time_help = gengetopt_args_info_help[9] ;
   
 }
 
@@ -243,6 +246,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "help", 0, 0 );
   if (args_info->version_given)
     write_into_file(outfile, "version", 0, 0 );
+  if (args_info->compact_given)
+    write_into_file(outfile, "compact", 0, 0 );
   if (args_info->dir_given)
     write_into_file(outfile, "dir", args_info->dir_orig, 0);
   if (args_info->discrete_given)
@@ -541,6 +546,7 @@ cmdline_parser_internal (
       static struct option long_options[] = {
         { "help",	0, NULL, 'h' },
         { "version",	0, NULL, 'V' },
+        { "compact",	0, NULL, 'c' },
         { "dir",	1, NULL, 'd' },
         { "discrete",	1, NULL, 'i' },
         { "file",	1, NULL, 'f' },
@@ -551,7 +557,7 @@ cmdline_parser_internal (
         { 0,  0, 0, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVd:i:f:m:o:s:t:", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVcd:i:f:m:o:s:t:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -567,7 +573,19 @@ cmdline_parser_internal (
           cmdline_parser_free (&local_args_info);
           exit (EXIT_SUCCESS);
 
-        case 'd':	/* directory.  */
+        case 'c':	/* Shows processed files in a compacted view.  */
+        
+        
+          if (update_arg( 0 , 
+               0 , &(args_info->compact_given),
+              &(local_args_info.compact_given), optarg, 0, 0, ARG_NO,
+              check_ambiguity, override, 0, 0,
+              "compact", 'c',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'd':	/* Directory to process.  */
         
         
           if (update_arg( (void *)&(args_info->dir_arg), 
@@ -579,7 +597,7 @@ cmdline_parser_internal (
             goto failure;
         
           break;
-        case 'i':	/* discrete.  */
+        case 'i':	/* Show selected bytes in file.  */
         
         
           if (update_arg( (void *)&(args_info->discrete_arg), 
@@ -591,7 +609,7 @@ cmdline_parser_internal (
             goto failure;
         
           break;
-        case 'f':	/* file.  */
+        case 'f':	/* Files to process.  */
         
         
           if (update_arg( (void *)&(args_info->file_arg), 
@@ -603,7 +621,7 @@ cmdline_parser_internal (
             goto failure;
         
           break;
-        case 'm':	/* mode.  */
+        case 'm':	/* Mode to process.  */
         
         
           if (update_arg( (void *)&(args_info->mode_arg), 
@@ -615,7 +633,7 @@ cmdline_parser_internal (
             goto failure;
         
           break;
-        case 'o':	/* output.  */
+        case 'o':	/* Send output to file.  */
         
         
           if (update_arg( (void *)&(args_info->output_arg), 
@@ -627,7 +645,7 @@ cmdline_parser_internal (
             goto failure;
         
           break;
-        case 's':	/* search.  */
+        case 's':	/* Search pattern.  */
         
         
           if (update_arg( (void *)&(args_info->search_arg), 
@@ -639,7 +657,7 @@ cmdline_parser_internal (
             goto failure;
         
           break;
-        case 't':	/* runtime.  */
+        case 't':	/* Print time of process execution.  */
         
         
           if (update_arg( (void *)&(args_info->time_arg), 

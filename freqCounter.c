@@ -90,16 +90,21 @@ int mode_verify_if_file_exists(struct gengetopt_args_info args_info, int mode_nu
     }
     else
     {
-        verify_mode(fptr, mode_number, file_path);
+        verify_mode(args_info, fptr, mode_number, file_path);
     }
 
     return 0;
 }
 
-void verify_mode(FILE *fptr, int mode_number, char *file_path)
+void verify_mode(struct gengetopt_args_info args_info, FILE *fptr, int mode_number, char *file_path)
 {
     if(mode_number == 1)
-        process_file_mode1(fptr, file_path);
+    {
+        if(args_info.compact_given)
+            process_file_mode1_compact(fptr, file_path);
+        else
+            process_file_mode1(fptr, file_path);
+    }    
 }
 
 void process_file_mode1(FILE *fptr, char *file_path)
@@ -132,22 +137,56 @@ void process_file_mode1(FILE *fptr, char *file_path)
 
     printf("freqCounter:'%s':%d bytes\n", file_path, file_size);
 
-    for(row = 0; row < MODE1_NUM_ROWS; row++)
+    for(int row = 0; row < MODE1_NUM_ROWS; row++)
     {
         if(byte_rows[row].byte_count > 0)
             printf("byte %03d:%d\n", byte_rows[row].byte_value, byte_rows[row].byte_count);
     }
 
     printf("sum:%d\n", file_size);
-    printf("----------\n");   
+    printf("----------\n");
 }
 
 void process_file_mode1_compact(FILE *fptr, char *file_path)
 {
+    char file_caracther;
+    int row;
+    int file_size = 0;
+    byte_count_t byte_rows[MODE1_NUM_ROWS];
 
+    struct stat st;
+    stat(file_path, &st);
+    file_size = st.st_size;
+
+    for(row = 0; row < MODE1_NUM_ROWS; row++)
+    {
+        byte_rows[row].byte_value = row;
+        byte_rows[row].byte_count = 0;
+    }
+
+    while((file_caracther = fgetc(fptr)) != EOF)
+    {
+        for(int row = 0; row < MODE1_NUM_ROWS; row++)
+        {
+            if(file_caracther == row)
+            {
+                byte_rows[row].byte_count += 1;
+            }
+        }
+    }
+
+    printf("freqCounter:'%s':", file_path);
+
+    for(int row = 0; row < MODE1_NUM_ROWS; row++)
+    {
+        if(byte_rows[row].byte_count > 0)
+            printf("%d", byte_rows[row].byte_count);
+    }
+
+    printf(":sum:%d\n", file_size);
 }
 
 void processed_file_to_file(void)
 {
-
-}
+    return 0;
+}  
