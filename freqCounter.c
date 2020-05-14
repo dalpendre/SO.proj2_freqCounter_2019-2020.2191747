@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
+#include <sys/stat.h>
 
 #include "args.h"
 #include "debug.h"
 #include "memory.h"
 
-#include "matrix.h" 
 #include "freqCounter.h"
 
 #define RED   "\x1B[31m"
@@ -18,6 +18,12 @@
 #define MODE4_NUM_ROWS 4294967296
 
 #define NUM_COLS 2
+
+typedef struct
+{
+    int byte_value;
+    int byte_count;
+} byte_count_t;
 
 //Extract files or directories without mode
 int get_listed_files(struct gengetopt_args_info args_info, int argc, char *argv[])
@@ -66,10 +72,6 @@ int verify_if_file_exists(struct gengetopt_args_info args_info, int argc, char *
     }
     else
     {
-        //Verifies if compact is given
-        if(argv[5] == "--compact" || argv[5] == "-c")
-            process_file_mode1_compact(fptr, file_path);
-
         process_file_mode1(fptr, file_path);
     }
 
@@ -94,42 +96,6 @@ int mode_verify_if_file_exists(struct gengetopt_args_info args_info, int mode_nu
     return 0;
 }
 
-int get_listed_directories(int argc, char *argv[])
-{
-    return 0;
-}
-
-int mode_get_listed_directories(int argc, char *argv[])
-{
-    return 0;
-}
-
-int verify_if_directory_exists(char *directory_path)
-{
-    DIR *dirptr = NULL;
-    dirptr = opendir(directory_path);
-
-    if(dirptr == NULL)
-    {
-        ERROR(1, "Can't open directory '%s'", directory_path);
-    }
-    
-    return 0;
-}
-
-int mode_verify_if_dir_exists(int mode_number, char *directory_path)
-{
-    DIR *dirptr = NULL;
-    dirptr = opendir(directory_path);
-
-    if(dirptr == NULL)
-    {
-        ERROR(1, "Can't open directory '%s'", directory_path);
-    }
-
-    return 0;
-}
-
 void verify_mode(FILE *fptr, int mode_number, char *file_path)
 {
     if(mode_number == 1)
@@ -139,54 +105,46 @@ void verify_mode(FILE *fptr, int mode_number, char *file_path)
 void process_file_mode1(FILE *fptr, char *file_path)
 {
     char file_caracther;
-    int **matrix_counts = matrix_new(MODE1_NUM_ROWS, NUM_COLS);
-    int byte_count = 0;
+    int row;
+    int file_size = 0;
+    byte_count_t byte_rows[MODE1_NUM_ROWS];
 
-    matrix_fill_bytes(matrix_counts, MODE1_NUM_ROWS);
+    struct stat st;
+    stat(file_path, &st);
+    file_size = st.st_size;
+
+    for(row = 0; row < MODE1_NUM_ROWS; row++)
+    {
+        byte_rows[row].byte_value = row;
+        byte_rows[row].byte_count = 0;
+    }
 
     while((file_caracther = fgetc(fptr)) != EOF)
     {
         for(int row = 0; row < MODE1_NUM_ROWS; row++)
         {
             if(file_caracther == row)
-                matrix_add_ocurrence(matrix_counts, MODE1_NUM_ROWS, file_caracther);
+            {
+                byte_rows[row].byte_count += 1;
+            }
         }
     }
 
-    byte_count = count_bytes_in_file(matrix_counts, MODE1_NUM_ROWS);
+    printf("freqCounter:'%s':%d bytes\n", file_path, file_size);
 
-    printf("\nfreqCounter:'%s':%d\n", file_path, byte_count);
-    matrix_print(matrix_counts, MODE1_NUM_ROWS);
-    printf("sum:%i\n", byte_count);
-    printf("----------\n");
+    for(row = 0; row < MODE1_NUM_ROWS; row++)
+    {
+        if(byte_rows[row].byte_count > 0)
+            printf("byte %03d:%d\n", byte_rows[row].byte_value, byte_rows[row].byte_count);
+    }
 
-    matrix_delete(matrix_counts);
-    fclose(fptr);
+    printf("sum:%d\n", file_size);
+    printf("----------\n");   
 }
 
 void process_file_mode1_compact(FILE *fptr, char *file_path)
 {
-    char file_caracther;
-    int **matrix_counts = matrix_new(MODE1_NUM_ROWS, NUM_COLS);
-    int byte_count = 0;
 
-    matrix_fill_bytes(matrix_counts, MODE1_NUM_ROWS);
-
-    while((file_caracther = fgetc(fptr)) != EOF)
-    {
-        for(int row = 0; row < MODE1_NUM_ROWS; row++)
-        {
-            if(file_caracther == row)
-                matrix_add_ocurrence(matrix_counts, MODE1_NUM_ROWS, file_caracther);
-        }
-    }
-
-    byte_count = count_bytes_in_file(matrix_counts, MODE1_NUM_ROWS);
-
-    printf("%s:%dbytes:%d:%d\n", file_path, byte_count, byte_count, byte_count);
-
-    matrix_delete(matrix_counts);
-    fclose(fptr);
 }
 
 void processed_file_to_file(void)

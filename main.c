@@ -36,20 +36,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    if(args_info.dir_given)
-    {
-        if(args_info.mode_given)
-        {
-            verify_mode_given(args_info.mode_arg);
-
-            mode_get_listed_directories(argc, argv);
-        }
-        else
-        {
-            get_listed_directories(argc, argv);
-        }
-    }
-
     cmdline_parser_free(&args_info);
 
     return 0;

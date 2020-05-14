@@ -24,7 +24,7 @@ PROGRAM=freqCounter
 PROGRAM_OPT=args
 
 # Object files required to build the executable
-PROGRAM_OBJS= main.o freqCounter.o matrix.o debug.o memory.o $(PROGRAM_OPT).o
+PROGRAM_OBJS= main.o freqCounter.o debug.o memory.o $(PROGRAM_OPT).o
 
 # Clean and all are not files
 .PHONY: clean all docs indent debugon
@@ -45,12 +45,11 @@ $(PROGRAM): $(PROGRAM_OBJS)
 	$(CC) -o $@ $(PROGRAM_OBJS) $(LIBS) $(LDFLAGS)
 
 # Dependencies
-main.o: main.c freqCounter.h matrix.o debug.h memory.h $(PROGRAM_OPT).h
+main.o: main.c freqCounter.h debug.h memory.h $(PROGRAM_OPT).h
 $(PROGRAM_OPT).o: $(PROGRAM_OPT).c $(PROGRAM_OPT).h
 
 debug.o: debug.c debug.h
 memory.o: memory.c memory.h
-matrix.o: matrix.c matrix.h
 
 # disable warnings from gengetopt generated files
 $(PROGRAM_OPT).o: $(PROGRAM_OPT).c $(PROGRAM_OPT).h
