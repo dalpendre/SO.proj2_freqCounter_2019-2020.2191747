@@ -85,7 +85,7 @@ int mode_verify_if_file_exists(struct gengetopt_args_info args_info, int mode_nu
 
     if(fptr == NULL)
     {
-        ERROR(1, "Can't open file %s", file_path);
+        ERROR(1, "ERROR:'%s': CANNOT PROCESS FILE", file_path);
         exit(1);
     }
     else
@@ -102,6 +102,8 @@ void verify_mode(struct gengetopt_args_info args_info, FILE *fptr, int mode_numb
     {
         if(args_info.compact_given)
             process_file_mode1_compact(fptr, file_path);
+        else if(args_info.discrete_given)
+            process_file_mode1_discrete(args_info, fptr, file_path);
         else
             process_file_mode1(fptr, file_path);
     }    
@@ -175,7 +177,7 @@ void process_file_mode1_compact(FILE *fptr, char *file_path)
         }
     }
 
-    printf("freqCounter:'%s':", file_path);
+    printf("%s:%dbytes:", file_path, file_size);
 
     for(int row = 0; row < MODE1_NUM_ROWS; row++)
     {
@@ -183,10 +185,18 @@ void process_file_mode1_compact(FILE *fptr, char *file_path)
             printf("%d", byte_rows[row].byte_count);
     }
 
-    printf(":sum:%d\n", file_size);
+    printf(":%d\n", file_size);
+}
+
+void process_file_mode1_discrete(struct gengetopt_args_info args_info, FILE *fptr, char *file_path)
+{
+
 }
 
 void processed_file_to_file(void)
 {
-    return 0;
-}  
+}
+
+/*double getExecutionTime()
+{
+}*/

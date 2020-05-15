@@ -18,7 +18,7 @@ void verify_mode(struct gengetopt_args_info args_info, FILE *fptr, int mode_numb
 //File processing
 void process_file_mode1(FILE *fptr, char *file_path);
 void process_file_mode1_compact(FILE *fptr, char *file_path);
-
+void process_file_mode1_discrete(struct gengetopt_args_info args_info, FILE *fptr, char *file_path);
 void processed_file_to_file(void);
 
 #endif
