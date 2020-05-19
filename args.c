@@ -34,22 +34,21 @@ const char *gengetopt_args_info_versiontext = "";
 const char *gengetopt_args_info_description = "";
 
 const char *gengetopt_args_info_help[] = {
-  "  -h, --help           Print help and exit",
-  "  -V, --version        Print version and exit",
-  "  -c, --compact        Shows processed files in a compacted view",
-  "  -d, --dir=STRING     Directory to process",
-  "  -i, --discrete=INT   Show selected bytes in file",
-  "  -f, --file=STRING    Files to process",
-  "  -m, --mode=SHORT     Mode to process",
-  "  -o, --output=STRING  Send output to file",
-  "  -s, --search=STRING  Search pattern",
-  "  -t, --time=STRING    Print time of process execution",
+  "  -h, --help             Print help and exit",
+  "  -V, --version          Print version and exit",
+  "  -c, --compact          Shows processed files in a compacted view",
+  "  -d, --dir=STRING       Directory to process",
+  "  -i, --discrete=STRING  Show selected bytes in file",
+  "  -f, --file=STRING      Files to process",
+  "  -m, --mode=SHORT       Mode to process",
+  "  -o, --output=STRING    Send output to file",
+  "  -s, --search=STRING    Search pattern",
+  "  -t, --time=STRING      Print time of process execution",
     0
 };
 
 typedef enum {ARG_NO
   , ARG_STRING
-  , ARG_INT
   , ARG_SHORT
 } cmdline_parser_arg_type;
 
@@ -62,8 +61,6 @@ static int
 cmdline_parser_internal (int argc, char **argv, struct gengetopt_args_info *args_info,
                         struct cmdline_parser_params *params, const char *additional_error);
 
-static int
-cmdline_parser_required2 (struct gengetopt_args_info *args_info, const char *prog_name, const char *additional_error);
 
 static char *
 gengetopt_strdup (const char *s);
@@ -89,6 +86,7 @@ void clear_args (struct gengetopt_args_info *args_info)
   FIX_UNUSED (args_info);
   args_info->dir_arg = NULL;
   args_info->dir_orig = NULL;
+  args_info->discrete_arg = NULL;
   args_info->discrete_orig = NULL;
   args_info->file_arg = NULL;
   args_info->file_orig = NULL;
@@ -202,6 +200,7 @@ cmdline_parser_release (struct gengetopt_args_info *args_info)
 
   free_string_field (&(args_info->dir_arg));
   free_string_field (&(args_info->dir_orig));
+  free_string_field (&(args_info->discrete_arg));
   free_string_field (&(args_info->discrete_orig));
   free_string_field (&(args_info->file_arg));
   free_string_field (&(args_info->file_orig));
@@ -357,37 +356,9 @@ cmdline_parser2 (int argc, char **argv, struct gengetopt_args_info *args_info, i
 int
 cmdline_parser_required (struct gengetopt_args_info *args_info, const char *prog_name)
 {
-  int result = EXIT_SUCCESS;
-
-  if (cmdline_parser_required2(args_info, prog_name, 0) > 0)
-    result = EXIT_FAILURE;
-
-  if (result == EXIT_FAILURE)
-    {
-      cmdline_parser_free (args_info);
-      exit (EXIT_FAILURE);
-    }
-  
-  return result;
-}
-
-int
-cmdline_parser_required2 (struct gengetopt_args_info *args_info, const char *prog_name, const char *additional_error)
-{
-  int error_occurred = 0;
-  FIX_UNUSED (additional_error);
-
-  /* checks for required options */
-  if (! args_info->file_given)
-    {
-      fprintf (stderr, "%s: '--file' ('-f') option required%s\n", prog_name, (additional_error ? additional_error : ""));
-      error_occurred = 1;
-    }
-  
-  
-  /* checks for dependences among options */
-
-  return error_occurred;
+  FIX_UNUSED (args_info);
+  FIX_UNUSED (prog_name);
+  return EXIT_SUCCESS;
 }
 
 
@@ -456,9 +427,6 @@ int update_arg(void *field, char **orig_field,
     val = possible_values[found];
 
   switch(arg_type) {
-  case ARG_INT:
-    if (val) *((int *)field) = strtol (val, &stop_char, 0);
-    break;
   case ARG_SHORT:
     if (val) *((short *)field) = (short)strtol (val, &stop_char, 0);
     break;
@@ -476,7 +444,6 @@ int update_arg(void *field, char **orig_field,
 
   /* check numeric conversion */
   switch(arg_type) {
-  case ARG_INT:
   case ARG_SHORT:
     if (val && !(stop_char && *stop_char == '\0')) {
       fprintf(stderr, "%s: invalid numeric value: %s\n", package_name, val);
@@ -602,7 +569,7 @@ cmdline_parser_internal (
         
           if (update_arg( (void *)&(args_info->discrete_arg), 
                &(args_info->discrete_orig), &(args_info->discrete_given),
-              &(local_args_info.discrete_given), optarg, 0, 0, ARG_INT,
+              &(local_args_info.discrete_given), optarg, 0, 0, ARG_STRING,
               check_ambiguity, override, 0, 0,
               "discrete", 'i',
               additional_error))
@@ -683,10 +650,6 @@ cmdline_parser_internal (
 
 
 
-  if (check_required)
-    {
-      error_occurred += cmdline_parser_required2 (args_info, argv[0], additional_error);
-    }
 
   cmdline_parser_release (&local_args_info);
 

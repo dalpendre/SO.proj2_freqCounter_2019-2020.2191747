@@ -43,7 +43,7 @@ struct gengetopt_args_info
   char * dir_arg;	/**< @brief Directory to process.  */
   char * dir_orig;	/**< @brief Directory to process original value given at command line.  */
   const char *dir_help; /**< @brief Directory to process help description.  */
-  int discrete_arg;	/**< @brief Show selected bytes in file.  */
+  char * discrete_arg;	/**< @brief Show selected bytes in file.  */
   char * discrete_orig;	/**< @brief Show selected bytes in file original value given at command line.  */
   const char *discrete_help; /**< @brief Show selected bytes in file help description.  */
   char * file_arg;	/**< @brief Files to process.  */

@@ -1,24 +1,25 @@
 #ifndef FREQCOUNTER_H_
 #define FREQCOUNTER_H_
 
-//Files
-int get_listed_files(struct gengetopt_args_info args_info, int argc, char *argv[]);
-int mode_get_listed_files(struct gengetopt_args_info args_info, int argc, char *argv[]);
-int verify_if_file_exists(struct gengetopt_args_info args_info, int argc, char *argv[], char *file_path);
-int mode_verify_if_file_exists(struct gengetopt_args_info args_info, int mode_number, char *file_path);
+typedef struct
+{
+    int byte_value;
+    int byte_count;
+} byte_count_t;
 
-//Directories
-int get_listed_directories(int argc, char *argv[]);
-int mode_get_listed_directories(int mode_number, int argc, char *argv[]);
-int verify_if_dir_exists(int mode_number, char *directory_path);
-int mode_verify_if_dir_exists(int mode_number, char *directory_path);
+void get_listed_files(struct gengetopt_args_info args_info);
+void get_listed_directories(struct gengetopt_args_info args_info);
 
-void verify_mode(struct gengetopt_args_info args_info, FILE *fptr, int mode_number, char *file_path);
+void verify_if_file_exists(struct gengetopt_args_info args_info, short mode_number, char *filename);
+void verify_if_dir_exists(struct gengetopt_args_info args_info, short mode_number, char *dirname);
 
-//File processing
-void process_file_mode1(FILE *fptr, char *file_path);
-void process_file_mode1_compact(FILE *fptr, char *file_path);
-void process_file_mode1_discrete(struct gengetopt_args_info args_info, FILE *fptr, char *file_path);
-void processed_file_to_file(void);
+void process_file(struct gengetopt_args_info args_info, FILE *fptr, char *filename);
+
+void print_file(byte_count_t byte_rows[], char *filename, size_t file_size);
+void print_file_compact(byte_count_t byte_rows[], char *filename, size_t file_size);
+void print_file_discrete(struct gengetopt_args_info args_info, byte_count_t byte_rows[], char *filename, size_t file_size);
+
+void processed_file_output(struct gengetopt_args_info args_info, byte_count_t byte_rows[], char *filename, size_t file_size);
+void processed_file_output_compact(struct gengetopt_args_info args_info, byte_count_t byte_rows[], char *filename, size_t file_size);
 
 #endif

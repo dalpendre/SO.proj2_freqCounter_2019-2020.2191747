@@ -10,106 +10,71 @@
 
 #include "freqCounter.h"
 
-#define RED   "\x1B[31m"
-#define RESET "\x1B[0m"
-
 #define MODE1_NUM_ROWS 256  
-#define MODE2_NUM_ROWS 65536
-#define MODE4_NUM_ROWS 4294967296
+#define DELIM ","
 
-#define NUM_COLS 2
-
-typedef struct
+void get_listed_files(struct gengetopt_args_info args_info)
 {
-    int byte_value;
-    int byte_count;
-} byte_count_t;
+    char *filename;
 
-//Extract files or directories without mode
-int get_listed_files(struct gengetopt_args_info args_info, int argc, char *argv[])
-{
-    const char delim[2]=",";
-    char *file;
+    filename = strtok(args_info.file_arg, DELIM);
 
-    file = strtok(argv[2], delim);
-
-    while(file != NULL)
+    while(filename != NULL)
     {
-        verify_if_file_exists(args_info, argc, argv, file);
-        file = strtok(NULL, delim);
-    }
-
-    return 0;
-}
-
-//Extract files or directories listed with mode option
-int mode_get_listed_files(struct gengetopt_args_info args_info, int argc, char *argv[])
-{
-    int mode_number = atoi(argv[2]);
-    const char delim[2] = ",";
-    char *file;
-
-    file = strtok(args_info.file_arg, delim);
-
-    while(file != NULL)
-    {
-        mode_verify_if_file_exists(args_info, mode_number, file);
-        file = strtok(NULL, delim);
-    }
-
-    return 0;
-}
-
-int verify_if_file_exists(struct gengetopt_args_info args_info, int argc, char *argv[], char *file_path)
-{
-    FILE *fptr = NULL;
-    fptr = fopen(file_path, "r");
-
-    if(fptr == NULL)
-    {
-        ERROR(1, "Can't open file %s", file_path);
-        exit(1);
-    }
-    else
-    {
-        process_file_mode1(fptr, file_path);
-    }
-
-    return 0;
-}
-
-int mode_verify_if_file_exists(struct gengetopt_args_info args_info, int mode_number, char *file_path)
-{
-    FILE *fptr = NULL;
-    fptr = fopen(file_path, "r");
-
-    if(fptr == NULL)
-    {
-        ERROR(1, "ERROR:'%s': CANNOT PROCESS FILE", file_path);
-        exit(1);
-    }
-    else
-    {
-        verify_mode(args_info, fptr, mode_number, file_path);
-    }
-
-    return 0;
-}
-
-void verify_mode(struct gengetopt_args_info args_info, FILE *fptr, int mode_number, char *file_path)
-{
-    if(mode_number == 1)
-    {
-        if(args_info.compact_given)
-            process_file_mode1_compact(fptr, file_path);
-        else if(args_info.discrete_given)
-            process_file_mode1_discrete(args_info, fptr, file_path);
+        if(args_info.mode_given)
+            verify_if_file_exists(args_info, args_info.mode_arg, filename);
         else
-            process_file_mode1(fptr, file_path);
-    }    
+            verify_if_file_exists(args_info, 1, filename);
+
+        filename = strtok(NULL, DELIM);
+    }
 }
 
-void process_file_mode1(FILE *fptr, char *file_path)
+void get_listed_directories(struct gengetopt_args_info args_info)
+{
+    char *directory_name;
+
+    directory_name = strtok(args_info.dir_arg, DELIM);
+
+    while(directory_name != NULL)
+    {
+        puts(directory_name);
+        directory_name = strtok(NULL, DELIM);
+    }
+}
+
+void verify_if_file_exists(struct gengetopt_args_info args_info, short mode_number, char *filename)
+{
+    FILE *fptr = NULL;
+    fptr = fopen(filename, "r");
+
+    if(fptr == NULL)
+    {   
+        ERROR(1, "ERROR:'%s': CANNOT PROCESS FILE", filename);
+    }
+
+    process_file(args_info, fptr, filename);
+}
+
+void verify_if_dir_exists(struct gengetopt_args_info args_info, short mode_number, char *dirname)
+{
+    DIR *dptr = NULL;
+    dptr = opendir(dirname);
+    struct dirent *ent;
+
+    if(dptr == NULL)
+    {
+        ERROR(1, "ERROR:'%s': CANNOT PROCESS DIRECTORY", dirname);
+    }
+    else
+    {
+        puts(dirname);
+
+        closedir(dptr);
+    }
+}
+
+void process_file(struct gengetopt_args_info args_info, FILE *fptr, char *filename)
 {
     char file_caracther;
     int row;
@@ -117,7 +82,7 @@ void process_file_mode1(FILE *fptr, char *file_path)
     byte_count_t byte_rows[MODE1_NUM_ROWS];
 
     struct stat st;
-    stat(file_path, &st);
+    stat(filename, &st);
     file_size = st.st_size;
 
     for(row = 0; row < MODE1_NUM_ROWS; row++)
@@ -137,7 +102,31 @@ void process_file_mode1(FILE *fptr, char *file_path)
         }
     }
 
-    printf("freqCounter:'%s':%d bytes\n", file_path, file_size);
+    if(args_info.output_given)
+    {
+        if(args_info.compact_given)
+            processed_file_output_compact(args_info, byte_rows, filename, file_size);
+        else if(args_info.discrete_given)
+            printf("Discrete\n");
+        else
+            processed_file_output(args_info, byte_rows, filename, file_size);
+    }
+    else
+    {
+        if(args_info.compact_given)
+            print_file_compact(byte_rows, filename, file_size);
+        else if(args_info.discrete_given)
+            print_file_discrete(args_info, byte_rows, filename, file_size);
+        else
+            print_file(byte_rows, filename, file_size);
+
+        fclose(fptr);
+    }
+}
+
+void print_file(byte_count_t byte_rows[], char *filename, size_t file_size)
+{
+    printf("freqCounter:'%s':%lu bytes\n", filename, file_size);
 
     for(int row = 0; row < MODE1_NUM_ROWS; row++)
     {
@@ -145,39 +134,13 @@ void process_file_mode1(FILE *fptr, char *file_path)
             printf("byte %03d:%d\n", byte_rows[row].byte_value, byte_rows[row].byte_count);
     }
 
-    printf("sum:%d\n", file_size);
+    printf("sum:%lu\n", file_size);
     printf("----------\n");
 }
 
-void process_file_mode1_compact(FILE *fptr, char *file_path)
+void print_file_compact(byte_count_t byte_rows[], char *filename, size_t file_size)
 {
-    char file_caracther;
-    int row;
-    int file_size = 0;
-    byte_count_t byte_rows[MODE1_NUM_ROWS];
-
-    struct stat st;
-    stat(file_path, &st);
-    file_size = st.st_size;
-
-    for(row = 0; row < MODE1_NUM_ROWS; row++)
-    {
-        byte_rows[row].byte_value = row;
-        byte_rows[row].byte_count = 0;
-    }
-
-    while((file_caracther = fgetc(fptr)) != EOF)
-    {
-        for(int row = 0; row < MODE1_NUM_ROWS; row++)
-        {
-            if(file_caracther == row)
-            {
-                byte_rows[row].byte_count += 1;
-            }
-        }
-    }
-
-    printf("%s:%dbytes:", file_path, file_size);
+    printf("%s:%lubytes:", filename, file_size);
 
     for(int row = 0; row < MODE1_NUM_ROWS; row++)
     {
@@ -185,18 +148,44 @@ void process_file_mode1_compact(FILE *fptr, char *file_path)
             printf("%d", byte_rows[row].byte_count);
     }
 
-    printf(":%d\n", file_size);
+    printf(":%lu\n", file_size);
 }
 
-void process_file_mode1_discrete(struct gengetopt_args_info args_info, FILE *fptr, char *file_path)
-{
-
-}
-
-void processed_file_to_file(void)
+void print_file_discrete(struct gengetopt_args_info args_info, byte_count_t byte_rows[], char *filename, size_t file_size)
 {
 }
 
-/*double getExecutionTime()
+void processed_file_output(struct gengetopt_args_info args_info, byte_count_t byte_rows[], char *filename, size_t file_size)
 {
-}*/
+    FILE *fptr = fopen(args_info.output_arg, "a");
+ 
+    fprintf(fptr, "freqCounter:'%s':%lu bytes\n", filename, file_size);
+
+    for(int row = 0; row < MODE1_NUM_ROWS; row++)
+    {
+        if(byte_rows[row].byte_count > 0)
+            fprintf(fptr, "byte %03d:%d\n", byte_rows[row].byte_value, byte_rows[row].byte_count);
+    }
+
+    fprintf(fptr, "sum:%lu\n", file_size);
+    fprintf(fptr, "----------\n");
+
+    fclose(fptr);
+}
+
+void processed_file_output_compact(struct gengetopt_args_info args_info, byte_count_t byte_rows[], char *filename, size_t file_size)
+{
+    FILE *fptr = fopen(args_info.output_arg, "a");
+
+    fprintf(fptr, "%s:%lubytes:", filename, file_size);
+
+    for(int row = 0; row < MODE1_NUM_ROWS; row++)
+    {
+        if(byte_rows[row].byte_count > 0)
+            fprintf(fptr, "%d", byte_rows[row].byte_count);
+    }
+
+    fprintf(fptr, ":%lu\n", file_size);
+
+    fclose(fptr);
+}
