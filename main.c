@@ -1,12 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <assert.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdint.h>
 
 #include "args.h"
 #include "debug.h"
 
 #include "freqCounter.h"
 #include "freqCounterMode2.h"
-#include "freqCounterMode4.h"
 
 int main(int argc, char *argv[])
 {
@@ -29,22 +37,23 @@ int main(int argc, char *argv[])
     {
         if(args_info.mode_arg == 1 || args_info.mode_given == 0)
             get_listed_files(args_info);
-        else if(args_info.mode_arg == 2)
-            printf("Modo 2\n");
-        else if(args_info.mode_arg == 4)
-            printf("Modo 4\n");
         
+        if(args_info.mode_arg == 2)
+        {
+            get_listed_files_mode2(args_info);
+        }
+        
+        if(args_info.mode_arg == 4)
+            printf("Modo 4\n");    
     }
 
     if(args_info.dir_given)
     {
-        if(args_info.mode_arg == 1)
-            get_listed_directories(args_info);
-        else
-            get_listed_directories(args_info);        
+        if(args_info.mode_arg == 1 || args_info.mode_given == 0)
+            get_listed_directories(args_info);    
     }
 
-    if(args_info.file_given && args_info.dir_given)
+    /*if(args_info.file_given && args_info.dir_given)
     {
         if(args_info.mode_arg == 1)
         {
@@ -59,7 +68,7 @@ int main(int argc, char *argv[])
         {
             printf("Modo 4\n");
         }
-    }
+    }*/
 
     cmdline_parser_free(&args_info);
 
