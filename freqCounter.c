@@ -31,10 +31,11 @@ void get_listed_files(struct gengetopt_args_info args_info)
         int file = open(filename, O_RDONLY);
 
         if(file == -1)
-        {   
-            ERROR(1, "ERROR:'%s': CANNOT PROCESS FILE", filename);
+        {
+            fprintf(stdout, "ERROR:'%s': CANNOT PROCESS FILE\n", filename);
+            printf("----------\n");
         }
-           
+        
         process_file(args_info, file, filename);
 
         filename = strtok(NULL, DELIM);
@@ -58,11 +59,12 @@ void get_listed_directories(struct gengetopt_args_info args_info)
         {
             while((dir = readdir(dptr)) != NULL)
             {
-                printf("%s\n", dir->d_name);
-
                 int file = open(dir->d_name, O_RDONLY, 0777);
 
-                printf("%d\n", file);
+                if(file == -1)
+                    fprintf(stdout, "ERROR:'%s': CANNOT PROCESS FILE\n", dir->d_name);
+                else
+                    printf("Filename: %s\n", dir->d_name);
             }
         }
 
@@ -154,6 +156,25 @@ void print_file_compact(byte_count_t byte_rows[], char *filename, size_t file_si
 
 void print_file_discrete(struct gengetopt_args_info args_info, byte_count_t byte_rows[], char *filename, size_t file_size)
 {
+    int value;
+    char *user_value = strtok(args_info.discrete_arg, DELIM);
+
+    printf("freqCounter:'%s':%lu bytes\n", filename, file_size);
+
+    while(user_value != NULL)
+    {
+        value = atoi(user_value);
+        for(int i = 0; i < MODE1_NUM_ROWS; i++)
+        {
+            if(byte_rows[i].byte_value == value)
+                printf("byte %03u:%lu\n", byte_rows[i].byte_value, byte_rows[i].byte_count);
+        }
+
+        user_value = strtok(NULL, DELIM);
+    }
+
+    printf("sum:%lu\n", file_size);
+    printf("----------\n");
 }
 
 void processed_file_output(struct gengetopt_args_info args_info, byte_count_t byte_rows[], char *filename, size_t file_size)

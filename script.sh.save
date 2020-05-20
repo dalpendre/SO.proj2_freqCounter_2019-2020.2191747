@@ -1,0 +1,3 @@
+chmod +x *.c
+
+chmod +x *.h
