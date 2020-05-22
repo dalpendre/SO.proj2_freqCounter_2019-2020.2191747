@@ -8,9 +8,9 @@ version "1.0"
 #SO Project parameters
 option "compact" c "Shows processed files in a compacted view" no
 option "dir" d "Directory to process" string no
-option "discrete" i "Show selected bytes in file" string no
+option "discrete" - "Show selected bytes in file" string no
 option "file" f "Files to process" string no
 option "mode" m "Mode to process" short no
 option "output" o "Send output to file" string no
 option "search" s "Search pattern" string no
-option "time" t "Print time of process execution" string no
+option "time" - "Print time of process execution" no
