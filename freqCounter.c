@@ -50,7 +50,7 @@ void get_listed_files(struct gengetopt_args_info args_info, clock_t start, clock
 
         double execution_time = (double) (stop - start)/CLOCKS_PER_SEC;
 
-        printf("%.7f\n", execution_time);
+        printf("time: %.7f\n", execution_time);
     }
 }
 
