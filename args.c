@@ -38,12 +38,12 @@ const char *gengetopt_args_info_help[] = {
   "  -V, --version          Print version and exit",
   "  -c, --compact          Shows processed files in a compacted view",
   "  -d, --dir=STRING       Directory to process",
-  "      --discrete=STRING  Show selected bytes in file",
+  "  -i, --discrete=STRING  Show selected bytes in file",
   "  -f, --file=STRING      Files to process",
   "  -m, --mode=SHORT       Mode to process",
   "  -o, --output=STRING    Send output to file",
   "  -s, --search=STRING    Search pattern",
-  "      --time             Print time of process execution",
+  "  -t, --time=STRING      Print time of process execution",
     0
 };
 
@@ -95,6 +95,8 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->output_orig = NULL;
   args_info->search_arg = NULL;
   args_info->search_orig = NULL;
+  args_info->time_arg = NULL;
+  args_info->time_orig = NULL;
   
 }
 
@@ -207,6 +209,8 @@ cmdline_parser_release (struct gengetopt_args_info *args_info)
   free_string_field (&(args_info->output_orig));
   free_string_field (&(args_info->search_arg));
   free_string_field (&(args_info->search_orig));
+  free_string_field (&(args_info->time_arg));
+  free_string_field (&(args_info->time_orig));
   
   
 
@@ -256,7 +260,7 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
   if (args_info->search_given)
     write_into_file(outfile, "search", args_info->search_orig, 0);
   if (args_info->time_given)
-    write_into_file(outfile, "time", 0, 0 );
+    write_into_file(outfile, "time", args_info->time_orig, 0);
   
 
   i = EXIT_SUCCESS;
@@ -511,16 +515,16 @@ cmdline_parser_internal (
         { "version",	0, NULL, 'V' },
         { "compact",	0, NULL, 'c' },
         { "dir",	1, NULL, 'd' },
-        { "discrete",	1, NULL, 0 },
+        { "discrete",	1, NULL, 'i' },
         { "file",	1, NULL, 'f' },
         { "mode",	1, NULL, 'm' },
         { "output",	1, NULL, 'o' },
         { "search",	1, NULL, 's' },
-        { "time",	0, NULL, 0 },
+        { "time",	1, NULL, 't' },
         { 0,  0, 0, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVcd:f:m:o:s:", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVcd:i:f:m:o:s:t:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -556,6 +560,18 @@ cmdline_parser_internal (
               &(local_args_info.dir_given), optarg, 0, 0, ARG_STRING,
               check_ambiguity, override, 0, 0,
               "dir", 'd',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'i':	/* Show selected bytes in file.  */
+        
+        
+          if (update_arg( (void *)&(args_info->discrete_arg), 
+               &(args_info->discrete_orig), &(args_info->discrete_given),
+              &(local_args_info.discrete_given), optarg, 0, 0, ARG_STRING,
+              check_ambiguity, override, 0, 0,
+              "discrete", 'i',
               additional_error))
             goto failure;
         
@@ -608,38 +624,20 @@ cmdline_parser_internal (
             goto failure;
         
           break;
+        case 't':	/* Print time of process execution.  */
+        
+        
+          if (update_arg( (void *)&(args_info->time_arg), 
+               &(args_info->time_orig), &(args_info->time_given),
+              &(local_args_info.time_given), optarg, 0, 0, ARG_STRING,
+              check_ambiguity, override, 0, 0,
+              "time", 't',
+              additional_error))
+            goto failure;
+        
+          break;
 
         case 0:	/* Long option with no short option */
-          /* Show selected bytes in file.  */
-          if (strcmp (long_options[option_index].name, "discrete") == 0)
-          {
-          
-          
-            if (update_arg( (void *)&(args_info->discrete_arg), 
-                 &(args_info->discrete_orig), &(args_info->discrete_given),
-                &(local_args_info.discrete_given), optarg, 0, 0, ARG_STRING,
-                check_ambiguity, override, 0, 0,
-                "discrete", '-',
-                additional_error))
-              goto failure;
-          
-          }
-          /* Print time of process execution.  */
-          else if (strcmp (long_options[option_index].name, "time") == 0)
-          {
-          
-          
-            if (update_arg( 0 , 
-                 0 , &(args_info->time_given),
-                &(local_args_info.time_given), optarg, 0, 0, ARG_NO,
-                check_ambiguity, override, 0, 0,
-                "time", '-',
-                additional_error))
-              goto failure;
-          
-          }
-          
-          break;
         case '?':	/* Invalid option.  */
           /* `getopt_long' already printed an error message.  */
           goto failure;

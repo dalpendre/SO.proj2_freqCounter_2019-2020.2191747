@@ -58,6 +58,8 @@ struct gengetopt_args_info
   char * search_arg;	/**< @brief Search pattern.  */
   char * search_orig;	/**< @brief Search pattern original value given at command line.  */
   const char *search_help; /**< @brief Search pattern help description.  */
+  char * time_arg;	/**< @brief Print time of process execution.  */
+  char * time_orig;	/**< @brief Print time of process execution original value given at command line.  */
   const char *time_help; /**< @brief Print time of process execution help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
