@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/freqCounter",
-            "args": ["-m","3","-f","ficheiro.txt,jdsfdj,ficheiro.txt","--time"],
+            "args": ["-m","2","-f","ficheiro.txt"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
