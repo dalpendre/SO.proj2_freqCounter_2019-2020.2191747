@@ -49,14 +49,11 @@ int main(int argc, char *argv[])
         exit(EXIT_SUCCESS);
     }
 
+    if(args_info.mode_given == 0)
+        get_listed_files(args_info);
+
     if(args_info.mode_arg != 1 && args_info.mode_arg != 2 && args_info.mode_arg != 4)
     {
-        if(args_info.file_given)
-        {
-            if(args_info.mode_given == 0)
-                get_listed_files(args_info);
-        }
-        
         ERROR(1, "ERROR: invalid value ‘%d’ for -m/--mode.\n", args_info.mode_arg);
     }
 
