@@ -1,10 +1,3 @@
-# Easily adaptable makefile
-# Note: remove comments (#) to activate some features
-#
-# author Vitor Carreira
-# date 2010-09-26 / updated: 2016-03-15 (Patricio)
-
-# Libraries to include (if any)
 LIBS=#-lm -pthread
 
 # Compiler flags
@@ -24,7 +17,7 @@ PROGRAM=freqCounter
 PROGRAM_OPT=args
 
 # Object files required to build the executable
-PROGRAM_OBJS= main.o freqCounter.o freqCounterMode2.o freqCounterMode4.o debug.o memory.o $(PROGRAM_OPT).o
+PROGRAM_OBJS= main.o freqCounter.o freqCounterMode2.o debug.o memory.o $(PROGRAM_OPT).o
 
 # Clean and all are not files
 .PHONY: clean all docs indent debugon
@@ -45,7 +38,7 @@ $(PROGRAM): $(PROGRAM_OBJS)
 	$(CC) -o $@ $(PROGRAM_OBJS) $(LIBS) $(LDFLAGS)
 
 # Dependencies
-main.o: main.c freqCounter.h freqCounterMode2.o freqCounterMode4.o debug.h memory.h $(PROGRAM_OPT).h
+main.o: main.c freqCounter.h freqCounterMode2.o debug.h memory.h $(PROGRAM_OPT).h
 $(PROGRAM_OPT).o: $(PROGRAM_OPT).c $(PROGRAM_OPT).h
 
 debug.o: debug.c debug.h
