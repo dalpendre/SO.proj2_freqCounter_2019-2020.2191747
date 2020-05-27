@@ -1,16 +1,16 @@
 # args.ggo
 # Ficheiro de configuração do programa SO
 
-purpose "2º Project of SO"
-package "SO"
-version "1.0"
+purpose "Diogo Cruz Alpendre - 2191747"
+package "SO 2º Project"
+version "Beta"
 
 #SO Project parameters
 option "compact" c "Shows processed files in a compacted view" no
-option "dir" d "Directory to process" string no
-option "discrete" - "Show selected bytes in file" string no
+option "dir" d "Directory to be processed (files in it will be processed)" string no
+option "discrete" - "Show selected bytes in file according to values indicated by the user" string no
 option "file" f "Files to process" string no
-option "mode" m "Mode to process" short no
-option "output" o "Send output to file" string no
-option "search" s "Search pattern" string no
-option "time" - "Print time of process execution" no
+option "mode" m "Mode (1 byte, 2 bytes or 4 bytes) to process files or directories" short no
+option "output" o "Send output of file/directory processment to file indicated by the user" string no
+option "search" s "Search pattern on file" string no
+option "time" - "Print time of the program execution" no

@@ -22,7 +22,7 @@
 
 #define DELIM ","
 
-void get_listed_files_mode2(struct gengetopt_args_info args_info)
+void get_listed_files_mode2(struct gengetopt_args_info args_info, clock_t start, clock_t stop)
 {
     char *filename = strtok(args_info.file_arg, DELIM);
 
@@ -37,13 +37,13 @@ void get_listed_files_mode2(struct gengetopt_args_info args_info)
         }
 
         if(file > 0)
-            process_file_mode2(args_info, file, filename);
+            process_file_mode2(args_info, file, filename, start, stop);
 
         filename = strtok(NULL, DELIM);
     }
 }
 
-void get_listed_directories_mode2(struct gengetopt_args_info args_info)
+void get_listed_directories_mode2(struct gengetopt_args_info args_info, clock_t start, clock_t stop)
 {
     char *directory_name;
 
@@ -70,7 +70,7 @@ void get_listed_directories_mode2(struct gengetopt_args_info args_info)
 
                 int file = open(full_filename, O_RDONLY);
 
-                process_file_mode2(args_info, file, full_filename);
+                process_file_mode2(args_info, file, full_filename, start, stop);
             }
         }
 
@@ -79,15 +79,14 @@ void get_listed_directories_mode2(struct gengetopt_args_info args_info)
     }
 }
 
-void process_file_mode2(struct gengetopt_args_info args_info, int file, char *filename)
+void process_file_mode2(struct gengetopt_args_info args_info, int file, char *filename, clock_t start, clock_t stop)
 {
     uint16_t file_caracther;
-    assert(sizeof(file_caracther)==2);
     uint64_t file_size, byte_counts[USHRT_MAX+1];
     unsigned int i;
 
     for(i = 0; i <= USHRT_MAX; i++)
-    {
+    {                                                   
         byte_counts[i] = 0;
     }
 
@@ -97,7 +96,7 @@ void process_file_mode2(struct gengetopt_args_info args_info, int file, char *fi
         {
             if(file_caracther == i)
             {
-                byte_counts[i] += 1;
+                byte_counts[i]+=1;
                 file_size += byte_counts[i];
             }
         }
@@ -108,28 +107,50 @@ void process_file_mode2(struct gengetopt_args_info args_info, int file, char *fi
     if(args_info.output_given)
     {
         if(args_info.compact_given)
-            processed_file_mode2_compact_output(args_info, byte_counts, filename, file_size);
+            processed_file_mode2_compact_output(args_info, byte_counts, filename, file_size, start, stop);
         else if(args_info.discrete_given)
-            processed_file_mode2_discrete_output(args_info, byte_counts, filename, file_size);
+        {
+            char *user_value = strtok(args_info.discrete_arg, DELIM);
+
+            while(user_value != NULL)
+            {
+                int value = atoi(user_value);
+
+                processed_file_mode2_discrete_output(args_info, byte_counts, value, filename, file_size, start, stop);
+
+                user_value = strtok(NULL, DELIM);
+            }
+        }
         else
-            processed_file_mode2_output(args_info, byte_counts, filename, file_size);
+            processed_file_mode2_output(args_info, byte_counts, filename, file_size, start, stop);
     }
     else
     {
         if(args_info.compact_given)
-            print_file_mode2_compact(byte_counts, file_size, filename);
+            print_file_mode2_compact(args_info, byte_counts, file_size, filename, start, stop);
         else if(args_info.discrete_given)
-            print_file_mode2_discrete(args_info, byte_counts, file_size, filename);
+        {
+            char *user_value = strtok(args_info.discrete_arg, DELIM);
+
+            while(user_value != NULL)
+            {
+                int value = atoi(user_value);
+
+                print_file_mode2_discrete(args_info, byte_counts, value, filename, file_size, start, stop);
+
+                user_value = strtok(NULL, DELIM);
+            }
+        }
         else
-            print_file_mode2(byte_counts, file_size, filename);
+            print_file_mode2(args_info, byte_counts, file_size, filename, start, stop);
     }
 
     file_size = 0;
 }
 
-void print_file_mode2(uint64_t byte_counts[], uint64_t file_size, char *filename)
+void print_file_mode2(struct gengetopt_args_info args_info, uint64_t byte_counts[], uint64_t file_size, char *filename, clock_t start, clock_t stop)
 {
-    printf("freqCounter:'%s': %lu bytes\n", filename, file_size);
+    printf("freqCounter:'%s':%lu bytes\n", filename, file_size);
 
     for(unsigned int i = 0; i <= USHRT_MAX; i++)
     {
@@ -139,9 +160,16 @@ void print_file_mode2(uint64_t byte_counts[], uint64_t file_size, char *filename
 
     printf("sum: %lu\n", file_size);
     printf("----------\n");
+
+    if(args_info.time_given)
+    {
+        stop = clock();
+        double execution_time = (double) (stop - start)/CLOCKS_PER_SEC;
+        printf("time: %.7f\n", execution_time);
+    }
 }
 
-void print_file_mode2_compact(uint64_t byte_counts[], uint64_t file_size, char *filename)
+void print_file_mode2_compact(struct gengetopt_args_info args_info, uint64_t byte_counts[], uint64_t file_size, char *filename, clock_t start, clock_t stop)
 {
     printf("%s:%lubytes:", filename, file_size);
 
@@ -152,13 +180,37 @@ void print_file_mode2_compact(uint64_t byte_counts[], uint64_t file_size, char *
     }
 
     printf(":%lu\n", file_size);
+
+    if(args_info.time_given)
+    {
+        stop = clock();
+        double execution_time = (double) (stop - start)/CLOCKS_PER_SEC;
+        printf("time: %.7f\n", execution_time);
+    }
 }
 
-void print_file_mode2_discrete(struct gengetopt_args_info args_info, uint64_t byte_counts[], char *filename, uint64_t file_size)
+void print_file_mode2_discrete(struct gengetopt_args_info args_info, uint64_t byte_counts[], uint32_t value, char *filename, uint64_t file_size, clock_t start, clock_t stop)
 {
+    printf("freqCounter:'%s':%lu bytes\n", filename, file_size);
+
+    for(int i = 0; i <= USHRT_MAX; i++)
+    {
+        if(byte_counts[i] == value)
+            printf("byte %03u:%lu\n", i, byte_counts[i]);
+    }
+
+    printf("sum:%lu\n", file_size);
+    printf("----------\n");
+
+    if(args_info.time_given)
+    {
+        stop = clock();
+        double execution_time = (double) (stop - start)/CLOCKS_PER_SEC;
+        printf("time: %.7f\n", execution_time);
+    }
 }
 
-void  processed_file_mode2_output(struct gengetopt_args_info args_info, uint64_t byte_counts[], char *filename, uint64_t file_size)
+void processed_file_mode2_output(struct gengetopt_args_info args_info, uint64_t byte_counts[], char *filename, uint64_t file_size, clock_t start, clock_t stop)
 {
     FILE *fptr = fopen(args_info.output_arg, "a");
  
@@ -173,12 +225,19 @@ void  processed_file_mode2_output(struct gengetopt_args_info args_info, uint64_t
     fprintf(fptr, "sum:%lu\n", file_size);
     fprintf(fptr, "----------\n");
 
+    if(args_info.time_given)
+    {
+        stop = clock();
+        double execution_time = (double) (stop - start)/CLOCKS_PER_SEC;
+        fprintf(fptr, "time: %.7f\n", execution_time);
+    }
+
     fclose(fptr);
 
     printf("INFO:output written to '%s'\n", args_info.output_arg);
 }
 
-void processed_file_mode2_compact_output(struct gengetopt_args_info args_info, uint64_t byte_counts[], char *filename, uint64_t file_size)
+void processed_file_mode2_compact_output(struct gengetopt_args_info args_info, uint64_t byte_counts[], char *filename, uint64_t file_size, clock_t start, clock_t stop)
 {
     FILE *fptr = fopen(args_info.output_arg, "a");
 
@@ -192,23 +251,39 @@ void processed_file_mode2_compact_output(struct gengetopt_args_info args_info, u
 
     fprintf(fptr, ":%lu\n", file_size);
 
+    if(args_info.time_given)
+    {
+        stop = clock();
+        double execution_time = (double) (stop - start)/CLOCKS_PER_SEC;
+        fprintf(fptr, "time: %.7f\n", execution_time);
+    }
+
     fclose(fptr);
 
     printf("INFO:output written to '%s'\n", args_info.output_arg);
 }
 
-void processed_file_mode2_discrete_output(struct gengetopt_args_info args_info, uint64_t byte_rows[], char *filename, uint64_t file_size)
+void processed_file_mode2_discrete_output(struct gengetopt_args_info args_info, uint64_t byte_counts[], uint32_t value, char *filename, uint64_t file_size, clock_t start, clock_t stop)
 {
-    char *value = strtok(args_info.discrete_arg, DELIM);
-
-    /*while(value != NULL)
-    {
-        puts(value);
-
-        value = strtok(args_info.discrete_arg, NULL);
-    }*/
-
     FILE *fptr = fopen(args_info.output_arg, "a");
  
     fprintf(fptr, "freqCounter:'%s':%lu bytes\n", filename, file_size);
+
+    for(int i = 0; i <= UCHAR_MAX; i++)
+    {
+        if(byte_counts[i] == value)
+            fprintf(fptr, "byte %03u:%lu\n", i, byte_counts[i]);
+    }
+
+    printf("sum:%lu\n", file_size);
+    printf("----------\n");
+
+    if(args_info.time_given)
+    {
+        stop = clock();
+        double execution_time = (double) (stop - start)/CLOCKS_PER_SEC;
+        fprintf(fptr, "time: %.7f\n", execution_time);
+    }
+
+    fclose(fptr);
 }

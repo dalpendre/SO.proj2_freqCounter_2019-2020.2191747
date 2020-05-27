@@ -1,5 +1,0 @@
-freqCounter:'ficheiro.txt':6 bytes
-sum:6
-----------
-ficheiro.txt:6bytes::6
-ficheiro.txt:6bytes::6

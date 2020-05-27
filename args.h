@@ -21,17 +21,17 @@ extern "C" {
 
 #ifndef CMDLINE_PARSER_PACKAGE
 /** @brief the program name (used for printing errors) */
-#define CMDLINE_PARSER_PACKAGE "SO"
+#define CMDLINE_PARSER_PACKAGE "SO 2º Project"
 #endif
 
 #ifndef CMDLINE_PARSER_PACKAGE_NAME
 /** @brief the complete program name (used for help and version) */
-#define CMDLINE_PARSER_PACKAGE_NAME "SO"
+#define CMDLINE_PARSER_PACKAGE_NAME "SO 2º Project"
 #endif
 
 #ifndef CMDLINE_PARSER_VERSION
 /** @brief the program version */
-#define CMDLINE_PARSER_VERSION "1.0"
+#define CMDLINE_PARSER_VERSION "Beta"
 #endif
 
 /** @brief Where the command line options are stored */
@@ -40,25 +40,25 @@ struct gengetopt_args_info
   const char *help_help; /**< @brief Print help and exit help description.  */
   const char *version_help; /**< @brief Print version and exit help description.  */
   const char *compact_help; /**< @brief Shows processed files in a compacted view help description.  */
-  char * dir_arg;	/**< @brief Directory to process.  */
-  char * dir_orig;	/**< @brief Directory to process original value given at command line.  */
-  const char *dir_help; /**< @brief Directory to process help description.  */
-  char * discrete_arg;	/**< @brief Show selected bytes in file.  */
-  char * discrete_orig;	/**< @brief Show selected bytes in file original value given at command line.  */
-  const char *discrete_help; /**< @brief Show selected bytes in file help description.  */
+  char * dir_arg;	/**< @brief Directory to be processed (files in it will be processed).  */
+  char * dir_orig;	/**< @brief Directory to be processed (files in it will be processed) original value given at command line.  */
+  const char *dir_help; /**< @brief Directory to be processed (files in it will be processed) help description.  */
+  char * discrete_arg;	/**< @brief Show selected bytes in file according to values indicated by the user.  */
+  char * discrete_orig;	/**< @brief Show selected bytes in file according to values indicated by the user original value given at command line.  */
+  const char *discrete_help; /**< @brief Show selected bytes in file according to values indicated by the user help description.  */
   char * file_arg;	/**< @brief Files to process.  */
   char * file_orig;	/**< @brief Files to process original value given at command line.  */
   const char *file_help; /**< @brief Files to process help description.  */
-  short mode_arg;	/**< @brief Mode to process.  */
-  char * mode_orig;	/**< @brief Mode to process original value given at command line.  */
-  const char *mode_help; /**< @brief Mode to process help description.  */
-  char * output_arg;	/**< @brief Send output to file.  */
-  char * output_orig;	/**< @brief Send output to file original value given at command line.  */
-  const char *output_help; /**< @brief Send output to file help description.  */
-  char * search_arg;	/**< @brief Search pattern.  */
-  char * search_orig;	/**< @brief Search pattern original value given at command line.  */
-  const char *search_help; /**< @brief Search pattern help description.  */
-  const char *time_help; /**< @brief Print time of process execution help description.  */
+  short mode_arg;	/**< @brief Mode (1 byte, 2 bytes or 4 bytes) to process files or directories.  */
+  char * mode_orig;	/**< @brief Mode (1 byte, 2 bytes or 4 bytes) to process files or directories original value given at command line.  */
+  const char *mode_help; /**< @brief Mode (1 byte, 2 bytes or 4 bytes) to process files or directories help description.  */
+  char * output_arg;	/**< @brief Send output of file/directory processment to file indicated by the user.  */
+  char * output_orig;	/**< @brief Send output of file/directory processment to file indicated by the user original value given at command line.  */
+  const char *output_help; /**< @brief Send output of file/directory processment to file indicated by the user help description.  */
+  char * search_arg;	/**< @brief Search pattern on file.  */
+  char * search_orig;	/**< @brief Search pattern on file original value given at command line.  */
+  const char *search_help; /**< @brief Search pattern on file help description.  */
+  const char *time_help; /**< @brief Print time of the program execution help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */

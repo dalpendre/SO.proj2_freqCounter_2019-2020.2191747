@@ -25,9 +25,9 @@
 
 #include "args.h"
 
-const char *gengetopt_args_info_purpose = "2º Project of SO";
+const char *gengetopt_args_info_purpose = "Diogo Cruz Alpendre - 2191747";
 
-const char *gengetopt_args_info_usage = "Usage: SO [OPTIONS]...";
+const char *gengetopt_args_info_usage = "Usage: SO 2º Project [OPTIONS]...";
 
 const char *gengetopt_args_info_versiontext = "";
 
@@ -37,13 +37,13 @@ const char *gengetopt_args_info_help[] = {
   "  -h, --help             Print help and exit",
   "  -V, --version          Print version and exit",
   "  -c, --compact          Shows processed files in a compacted view",
-  "  -d, --dir=STRING       Directory to process",
-  "      --discrete=STRING  Show selected bytes in file",
+  "  -d, --dir=STRING       Directory to be processed (files in it will be\n                           processed)",
+  "      --discrete=STRING  Show selected bytes in file according to values\n                           indicated by the user",
   "  -f, --file=STRING      Files to process",
-  "  -m, --mode=SHORT       Mode to process",
-  "  -o, --output=STRING    Send output to file",
-  "  -s, --search=STRING    Search pattern",
-  "      --time             Print time of process execution",
+  "  -m, --mode=SHORT       Mode (1 byte, 2 bytes or 4 bytes) to process files or\n                           directories",
+  "  -o, --output=STRING    Send output of file/directory processment to file\n                           indicated by the user",
+  "  -s, --search=STRING    Search pattern on file",
+  "      --time             Print time of the program execution",
     0
 };
 
@@ -548,7 +548,7 @@ cmdline_parser_internal (
             goto failure;
         
           break;
-        case 'd':	/* Directory to process.  */
+        case 'd':	/* Directory to be processed (files in it will be processed).  */
         
         
           if (update_arg( (void *)&(args_info->dir_arg), 
@@ -572,7 +572,7 @@ cmdline_parser_internal (
             goto failure;
         
           break;
-        case 'm':	/* Mode to process.  */
+        case 'm':	/* Mode (1 byte, 2 bytes or 4 bytes) to process files or directories.  */
         
         
           if (update_arg( (void *)&(args_info->mode_arg), 
@@ -584,7 +584,7 @@ cmdline_parser_internal (
             goto failure;
         
           break;
-        case 'o':	/* Send output to file.  */
+        case 'o':	/* Send output of file/directory processment to file indicated by the user.  */
         
         
           if (update_arg( (void *)&(args_info->output_arg), 
@@ -596,7 +596,7 @@ cmdline_parser_internal (
             goto failure;
         
           break;
-        case 's':	/* Search pattern.  */
+        case 's':	/* Search pattern on file.  */
         
         
           if (update_arg( (void *)&(args_info->search_arg), 
@@ -610,7 +610,7 @@ cmdline_parser_internal (
           break;
 
         case 0:	/* Long option with no short option */
-          /* Show selected bytes in file.  */
+          /* Show selected bytes in file according to values indicated by the user.  */
           if (strcmp (long_options[option_index].name, "discrete") == 0)
           {
           
@@ -624,7 +624,7 @@ cmdline_parser_internal (
               goto failure;
           
           }
-          /* Print time of process execution.  */
+          /* Print time of the program execution.  */
           else if (strcmp (long_options[option_index].name, "time") == 0)
           {
           

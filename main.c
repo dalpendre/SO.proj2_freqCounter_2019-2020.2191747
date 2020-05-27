@@ -31,9 +31,7 @@ int main(int argc, char *argv[])
 {
     struct gengetopt_args_info args_info;
 
-    //Clock starts here to measure all possibilities of outputs
-    clock_t start, stop;
-    double execution_time = 0.0;
+    clock_t start, stop = 0;
 
     start = clock();
 
@@ -42,31 +40,38 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    //Execute search first to avoid error of modes
     if(args_info.search_given)
     {
+        if(args_info.mode_given || args_info.help_given || args_info.discrete_given || args_info.compact_given)
+        {
+            printf("ERROR: searh option can only be used with -f/--file, - o/--output, -d/--dir or --time");
+        }
+
         search_file_octects(args_info);
         exit(EXIT_SUCCESS);
     }
 
     if(args_info.mode_given == 0)
-        get_listed_files(args_info);
+    {
+        get_listed_files(args_info, start, stop);
+        exit(EXIT_SUCCESS);
+    }
 
     if(args_info.mode_arg != 1 && args_info.mode_arg != 2 && args_info.mode_arg != 4)
     {
-        ERROR(1, "ERROR: invalid value ‘%d’ for -m/--mode.\n", args_info.mode_arg);
+        printf("ERROR: invalid value ‘%d’ for -m/--mode.\n", args_info.mode_arg);
     }
 
     if(args_info.file_given == 0 && args_info.dir_given == 0)
-        ERROR(1, "ERROR: please insert file option or directory option, or both\n");
+        printf("ERROR: please insert file option or directory option, or both\n");
 
     if(args_info.file_given)
     {
         if(args_info.mode_arg == 1)
-            get_listed_files(args_info);
+            get_listed_files(args_info, start, stop);
 
         if(args_info.mode_arg == 2)
-            get_listed_files_mode2(args_info);
+            get_listed_files_mode2(args_info, start, stop);
     }
 
     if(args_info.dir_given)
@@ -75,28 +80,21 @@ int main(int argc, char *argv[])
             get_listed_directories(args_info);
 
         if(args_info.mode_arg == 2)
-            get_listed_directories_mode2(args_info);
+            get_listed_directories_mode2(args_info, start, stop);
     }
 
     if(args_info.file_given && args_info.dir_given)
     {
         if(args_info.mode_arg == 1)
         {
-            get_listed_files(args_info);
-            get_listed_directories(args_info);
+            get_listed_files(args_info, start, stop);
+            //get_listed_directories(args_info);
         }
         else if(args_info.mode_arg == 2)
         {
-            get_listed_files_mode2(args_info);
-            get_listed_directories_mode2(args_info);
+            get_listed_files_mode2(args_info, start, stop);
+            //get_listed_directories_mode2(args_info, start, stop);
         }
-    }
-
-    if(args_info.time_given)
-    {
-        stop = clock();
-        execution_time = (double) (stop - start)/CLOCKS_PER_SEC;
-        printf("time: %.7f\n", execution_time);
     }
 
     cmdline_parser_free(&args_info);

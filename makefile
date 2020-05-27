@@ -38,7 +38,7 @@ $(PROGRAM): $(PROGRAM_OBJS)
 	$(CC) -o $@ $(PROGRAM_OBJS) $(LIBS) $(LDFLAGS)
 
 # Dependencies
-main.o: main.c freqCounter.h freqCounterMode2.o debug.h memory.h $(PROGRAM_OPT).h
+main.o: main.c freqCounter.h freqCounterMode2.h debug.h memory.h $(PROGRAM_OPT).h
 $(PROGRAM_OPT).o: $(PROGRAM_OPT).c $(PROGRAM_OPT).h
 
 debug.o: debug.c debug.h
